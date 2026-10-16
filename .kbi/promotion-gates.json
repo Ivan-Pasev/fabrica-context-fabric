@@ -1,0 +1,47 @@
+{
+  "schema": "fcf.kbi.promotion.v1",
+  "project_id": "fcf-research",
+  "gates": {
+    "CANONICAL_DOC_EDIT": {
+      "default": "HOLD",
+      "enabled_by_this_package": false,
+      "required": [
+        "live_revision",
+        "scope",
+        "operator_authorization",
+        "diff_review",
+        "readback"
+      ]
+    },
+    "GITHUB_RELEASE": {
+      "default": "HOLD",
+      "enabled_by_this_package": false,
+      "required": [
+        "complete_public_source",
+        "license_review",
+        "remote_ci",
+        "privacy_check",
+        "maintainer_approval"
+      ]
+    },
+    "LIVE_OPENVIKING": {
+      "default": "HOLD",
+      "enabled_by_this_package": false,
+      "required": [
+        "native_v0.5.0",
+        "acl_test",
+        "index_consistency",
+        "recovery_test"
+      ]
+    }
+  },
+  "evidence_axes": [
+    "E0_ASSERTION",
+    "E1_REFERENCED",
+    "E2_MECHANICALLY_VERIFIED",
+    "E3_INDEPENDENTLY_REPRODUCED",
+    "E4_CONTENT_ADDRESSED",
+    "E5_EXTERNALLY_ATTESTED"
+  ],
+  "evidence_levels_are_independent_axes": true
+}
