@@ -1,0 +1,18 @@
+name: FCF reference tests
+on: [push, pull_request]
+jobs:
+  reference:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install --upgrade pip 'jsonschema>=4.0,<5'
+      - run: PYTHONPATH=src python -m fcf.kbi.validate --root .kbi
+      - run: PYTHONPATH=src python -m unittest discover -s tests -v
+      - run: PYTHONPATH=src python validation/check_schemas.py
+      - run: PYTHONPATH=src python cases/dft_reference_case.py

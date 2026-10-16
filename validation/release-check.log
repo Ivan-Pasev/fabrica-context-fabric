@@ -1,0 +1,88 @@
+/opt/pyvenv/bin/python -m unittest discover -s tests -v
+ ok
+test_03_record_metadata_tampering (test_fcf.CoreTests.test_03_record_metadata_tampering) ... ok
+test_04_forged_canonical_source (test_fcf.CoreTests.test_04_forged_canonical_source) ... ok
+test_05_invalid_project_id (test_fcf.CoreTests.test_05_invalid_project_id) ... ok
+test_06_missing_revision (test_fcf.CoreTests.test_06_missing_revision) ... ok
+test_07_no_empty_source (test_fcf.CoreTests.test_07_no_empty_source) ... ok
+test_08_large_source_rejected (test_fcf.CoreTests.test_08_large_source_rejected) ... ok
+test_09_immutable_capture_and_roundtrip (test_fcf.CoreTests.test_09_immutable_capture_and_roundtrip) ... ok
+test_10_store_tamper_detected (test_fcf.CoreTests.test_10_store_tamper_detected) ... ok
+test_11_injected_crash_leaves_no_new_artifact (test_fcf.CoreTests.test_11_injected_crash_leaves_no_new_artifact) ... ok
+test_12_cross_project_proposal_rejected (test_fcf.CoreTests.test_12_cross_project_proposal_rejected) ... ok
+test_13_zero_source_proposal_rejected (test_fcf.CoreTests.test_13_zero_source_proposal_rejected) ... ok
+test_14_declared_conflict_hold (test_fcf.CoreTests.test_14_declared_conflict_hold) ... ok
+test_15_untrusted_role_hold (test_fcf.CoreTests.test_15_untrusted_role_hold) ... ok
+test_16_valid_proposal_still_not_authorization (test_fcf.CoreTests.test_16_valid_proposal_still_not_authorization) ... ok
+test_17_missing_evidence_hold (test_fcf.CoreTests.test_17_missing_evidence_hold) ... ok
+test_18_proposal_tampering_hold (test_fcf.CoreTests.test_18_proposal_tampering_hold) ... ok
+test_19_prompt_injection_not_executed_or_promoted (test_fcf.CoreTests.test_19_prompt_injection_not_executed_or_promoted) ... ok
+test_20_digest_stability (test_fcf.CoreTests.test_20_digest_stability) ... ok
+test_acl_inherit_hold (test_p02_conformance.P02Tests.test_acl_inherit_hold) ... ok
+test_actual_secondary_identity_denied (test_p02_conformance.P02Tests.test_actual_secondary_identity_denied) ... ok
+test_anonymous_dev_mode_hold (test_p02_conformance.P02Tests.test_anonymous_dev_mode_hold) ... ok
+test_binding_detects_forged_manifest (test_p02_conformance.P02Tests.test_binding_detects_forged_manifest) ... ok
+test_cross_project_manifest_binding_rejected (test_p02_conformance.P02Tests.test_cross_project_manifest_binding_rejected) ... ok
+test_cross_scope_blocked_even_if_remote_returns_it (test_p02_conformance.P02Tests.test_cross_scope_blocked_even_if_remote_returns_it) ... ok
+test_find_scoped (test_p02_conformance.P02Tests.test_find_scoped) ... ok
+test_http_is_real_and_read_only (test_p02_conformance.P02Tests.test_http_is_real_and_read_only) ... ok
+test_http_secret_not_returned_in_report (test_p02_conformance.P02Tests.test_http_secret_not_returned_in_report) ... ok
+test_local_snapshot_binding_not_authentication (test_p02_conformance.P02Tests.test_local_snapshot_binding_not_authentication) ... ok
+test_no_api_key_even_for_loopback (test_p02_conformance.P02Tests.test_no_api_key_even_for_loopback) ... ok
+test_preflight (test_p02_conformance.P02Tests.test_preflight) ... ok
+test_retrieval_poison_does_not_grant_authority (test_p02_conformance.P02Tests.test_retrieval_poison_does_not_grant_authority) ... ok
+test_same_secret_secondary_user_rejected (test_p02_conformance.P02Tests.test_same_secret_secondary_user_rejected) ... ok
+test_unbound_source_remains_unbound (test_p02_conformance.P02Tests.test_unbound_source_remains_unbound) ... ok
+test_unknown_endpoint_not_available (test_p02_conformance.P02Tests.test_unknown_endpoint_not_available) ... ok
+test_version_mismatch_hold (test_p02_conformance.P02Tests.test_version_mismatch_hold) ... ok
+test_wildcard_acl_hold (test_p02_conformance.P02Tests.test_wildcard_acl_hold) ... ok
+test_wrong_foreign_identity_rejected (test_p02_conformance.P02Tests.test_wrong_foreign_identity_rejected) ... ok
+test_bad_acl_holds_before_download (test_p03_live_contract.P03HTTPTests.test_bad_acl_holds_before_download) ... ok
+test_bad_digest_format_rejected (test_p03_live_contract.P03HTTPTests.test_bad_digest_format_rejected) ... ok
+test_download_digest_mismatch_fails_closed (test_p03_live_contract.P03HTTPTests.test_download_digest_mismatch_fails_closed) ... ok
+test_end_to_end_simulated_contract_pass (test_p03_live_contract.P03HTTPTests.test_end_to_end_simulated_contract_pass) ... ok
+test_exact_sha256_operator_supplied (test_p03_live_contract.P03HTTPTests.test_exact_sha256_operator_supplied) ... ok
+test_false_api_claim_holds_preflight (test_p03_live_contract.P03HTTPTests.test_false_api_claim_holds_preflight) ... ok
+test_foreign_key_must_be_distinct (test_p03_live_contract.P03HTTPTests.test_foreign_key_must_be_distinct) ... ok
+test_full_probe_does_not_export_api_key (test_p03_live_contract.P03HTTPTests.test_full_probe_does_not_export_api_key) ... ok
+test_honest_statement_source_authenticity (test_p03_live_contract.P03HTTPTests.test_honest_statement_source_authenticity) ... ok
+test_malformed_index_envelope_holds (test_p03_live_contract.P03HTTPTests.test_malformed_index_envelope_holds) ... ok
+test_missing_index_holds (test_p03_live_contract.P03HTTPTests.test_missing_index_holds) ... ok
+test_negative_binary_download_denied (test_p03_live_contract.P03HTTPTests.test_negative_binary_download_denied) ... ok
+test_no_mutating_endpoint_called (test_p03_live_contract.P03HTTPTests.test_no_mutating_endpoint_called) ... ok
+test_outside_project_file_rejected (test_p03_live_contract.P03HTTPTests.test_outside_project_file_rejected) ... ok
+test_prefix_confusion_rejected (test_p03_live_contract.P03HTTPTests.test_prefix_confusion_rejected) ... ok
+test_server_file_mutation_detected (test_p03_live_contract.P03HTTPTests.test_server_file_mutation_detected) ... ok
+test_server_status_must_be_true_boolean (test_p03_live_contract.P03HTTPTests.test_server_status_must_be_true_boolean) ... ok
+test_traversal_and_encoded_delimiters_rejected (test_p03_live_contract.P03HTTPTests.test_traversal_and_encoded_delimiters_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 68 tests in 2.346s
+
+OK
+
+
+/opt/pyvenv/bin/python validation/check_schemas.py
+PASS source-record.schema.json
+PASS memory-proposal.schema.json
+PASS assessment.schema.json
+
+
+/opt/pyvenv/bin/python cases/dft_reference_case.py
+PASS: competing hypotheses preserved under HOLD
+
+
+/opt/pyvenv/bin/python -m fcf capture --store /tmp/tmpkwcbja6a --file fixtures/hypotheses.txt --project dft-research --uri fixture://dft/hypotheses --revision fixture-1
+{"content_sha256":"c9927206982b8efacb6b683a04db8ef8345c54deb14a4b0fffbc8fa9758eb114","record_sha256":"89b87cf90431102428d35b9c1065f7c391750a96b28932afadf48ce500b81c0e","status":"OBSERVED"}
+
+
+/opt/pyvenv/bin/python -m fcf verify --store /tmp/tmpkwcbja6a --record 89b87cf90431102428d35b9c1065f7c391750a96b28932afadf48ce500b81c0e
+{"content_bytes":151,"record_sha256":"89b87cf90431102428d35b9c1065f7c391750a96b28932afadf48ce500b81c0e","semantic_truth":"NOT_PROVEN","verified":true}
+
+
+/opt/pyvenv/bin/python -m fcf propose --store /tmp/tmpkwcbja6a --record 89b87cf90431102428d35b9c1065f7c391750a96b28932afadf48ce500b81c0e --claim Provisional note, pending scientific verification
+{"authority":"NONE","claim":"Provisional note, pending scientific verification","conflict_keys":[],"project_id":"dft-research","proposal_sha256":"2b0e0ae98eb7c21cdf6ef2934b9caa8f991964158b8b8546606c779ed75b91c0","schema_version":"fcf.proposal.v1","semantic_truth":"NOT_PROVEN","source_record_sha256":["89b87cf90431102428d35b9c1065f7c391750a96b28932afadf48ce500b81c0e"],"state":"PROPOSED"}
+
+
+/opt/pyvenv/bin/python -m fcf assess --store /tmp/tmpkwcbja6a --proposal /tmp/tmpkwcbja6a/proposal.json --principal-id demo-reviewer --role reviewer
+{"assessment_sha256":"e78f2beb1c60631198d6de572f943a93cd69311899cd79deca11223e0f472129","canonical_write_performed":false,"outcome":"ELIGIBLE_FOR_HUMAN_REVIEW","principal_id":"demo-reviewer","principal_role":"reviewer","proposal_sha256":"2b0e0ae98eb7c21cdf6ef2934b9caa8f991964158b8b8546606c779ed75b91c0","reasons":[],"schema_version":"fcf.assessment.v1","semantic_truth":"NOT_PROVEN"}

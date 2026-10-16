@@ -1,0 +1,19 @@
+{
+  "observed_date": "2026-10-16",
+  "upstream": "https://github.com/volcengine/OpenViking",
+  "release_target": {
+    "tag": "v0.5.0",
+    "commit_sha": "20f9c11362ad16193b0daa4a414e1095061af427",
+    "release_published_utc": "2026-10-09T15:46:55Z",
+    "reason": "Reproducible OpenViking v0.5.0 API integration target"
+  },
+  "main_reference": {
+    "commit_sha": "842ae41e4b2852a3a216004362db0adac49a8fd2",
+    "committed_utc": "2026-10-16T05:46:13Z",
+    "reason": "Source architecture research reference only, not a substitute for release testing"
+  },
+  "artifact_kind": "API_REFERENCE_ONLY",
+  "vendored_source": false,
+  "license_clearance": "PENDING_LEGAL_REVIEW",
+  "verified_by": "GitHub connector repository/commit/tag API metadata"
+}

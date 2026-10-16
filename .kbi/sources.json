@@ -1,0 +1,153 @@
+{
+  "schema": "fcf.kbi.sources.v1",
+  "project_id": "fcf-research",
+  "canonical_root": "https://drive.google.com/drive/folders/PROJECT_FOLDER_ID_REDACTED",
+  "sources": [
+    {
+      "id": "FCF-START",
+      "title": "FCF_START_HERE",
+      "url": "https://docs.google.com/document/d/PROJECT_SOURCE_ID_REDACTED/edit",
+      "source_system": "google_drive",
+      "authority": "RND_CANON",
+      "content_type": "native_document",
+      "required": true,
+      "role": "START_HERE"
+    },
+    {
+      "id": "FCF-HANDOFF",
+      "title": "FCF_STATE_AND_HANDOFF",
+      "url": "https://docs.google.com/document/d/PROJECT_SOURCE_ID_REDACTED/edit",
+      "source_system": "google_drive",
+      "authority": "RND_CANON",
+      "content_type": "native_document",
+      "required": true,
+      "role": "STATE_AND_HANDOFF"
+    },
+    {
+      "id": "FCF-WHITEPAPER",
+      "title": "FCF_MASTER_WHITE_PAPER — Living Manuscript",
+      "url": "https://docs.google.com/document/d/PROJECT_SOURCE_ID_REDACTED/edit",
+      "source_system": "google_drive",
+      "authority": "RND_CANON",
+      "content_type": "native_document",
+      "required": true,
+      "role": "WHITE_PAPER"
+    },
+    {
+      "id": "KBI-DUAL",
+      "title": "01_KBI_DUAL_LINEAGE — Epistemic and Runtime Kernel Contract",
+      "url": "https://docs.google.com/document/d/PROJECT_SOURCE_ID_REDACTED/edit",
+      "source_system": "google_drive",
+      "authority": "EXTERNAL_REFERENCE",
+      "content_type": "native_document",
+      "required": false,
+      "role": "REFERENCE"
+    },
+    {
+      "id": "KBI-EPISTEMIC",
+      "title": "DIGITAL FABRICA — KBI — KNOWLEDGE BOUNDARY INTELLIGENCE v0.1 — LIVE",
+      "url": "https://docs.google.com/document/d/PROJECT_SOURCE_ID_REDACTED/edit",
+      "source_system": "google_drive",
+      "authority": "EXTERNAL_REFERENCE",
+      "content_type": "native_document",
+      "required": false,
+      "role": "REFERENCE"
+    },
+    {
+      "id": "KBI-RUNTIME",
+      "title": "SRC_KBI_ROOT_v0.1.md — kernel-based runtime assurance",
+      "url": "https://drive.google.com/file/d/PROJECT_FILE_ID_REDACTED/view",
+      "source_system": "google_drive",
+      "authority": "EXTERNAL_REFERENCE",
+      "content_type": "markdown",
+      "required": false,
+      "role": "REFERENCE"
+    },
+    {
+      "id": "KBI-PORTABLE",
+      "title": "04_PORTABLE_CANONICAL_KBI — Reusable R&D Folder Cell Pattern",
+      "url": "https://docs.google.com/document/d/PROJECT_SOURCE_ID_REDACTED/edit",
+      "source_system": "google_drive",
+      "authority": "EXTERNAL_REFERENCE",
+      "content_type": "native_document",
+      "required": false,
+      "role": "REFERENCE"
+    },
+    {
+      "id": "OV-PIN",
+      "title": "OpenViking v0.5.0",
+      "url": "https://github.com/volcengine/OpenViking/tree/20f9c11362ad16193b0daa4a414e1095061af427",
+      "source_system": "github",
+      "authority": "UPSTREAM_DEPENDENCY",
+      "content_type": "source",
+      "required": false,
+      "role": "REFERENCE"
+    },
+    {
+      "id": "FCF-KBI-KERNEL",
+      "role": "KBI_KERNEL",
+      "title": "FCF_KBI_KERNEL_AND_LATTICE",
+      "url": "https://docs.google.com/document/d/PROJECT_SOURCE_ID_REDACTED/edit",
+      "source_system": "google_drive",
+      "authority": "RND_CANON",
+      "content_type": "native_document",
+      "required": false
+    },
+    {
+      "id": "FCF-KBI-EPISTEMIC",
+      "role": "KBI_EPISTEMIC",
+      "title": "FCF_KBI_EPISTEMIC",
+      "url": "https://docs.google.com/document/d/PROJECT_SOURCE_ID_REDACTED/edit",
+      "source_system": "google_drive",
+      "authority": "RND_CANON",
+      "content_type": "native_document",
+      "required": false
+    },
+    {
+      "id": "FCF-KBI-SOURCES",
+      "role": "KBI_SOURCE_REGISTRY",
+      "title": "FCF_KBI_SOURCE_REGISTRY",
+      "url": "https://docs.google.com/document/d/PROJECT_SOURCE_ID_REDACTED/edit",
+      "source_system": "google_drive",
+      "authority": "RND_CANON",
+      "content_type": "native_document",
+      "required": false
+    },
+    {
+      "id": "FCF-KBI-GATES",
+      "role": "KBI_PROMOTION_GATES",
+      "title": "FCF_KBI_PROMOTION_AND_RELEASE_GATES",
+      "url": "https://docs.google.com/document/d/PROJECT_SOURCE_ID_REDACTED/edit",
+      "source_system": "google_drive",
+      "authority": "RND_CANON",
+      "content_type": "native_document",
+      "required": false
+    },
+    {
+      "id": "FCF-KBI-PORTABLE",
+      "role": "KBI_PORTABILITY",
+      "title": "FCF_KBI_PORTABILITY_AND_NEGATIVE_CASES",
+      "url": "https://docs.google.com/document/d/PROJECT_SOURCE_ID_REDACTED/edit",
+      "source_system": "google_drive",
+      "authority": "RND_CANON",
+      "content_type": "native_document",
+      "required": false
+    },
+    {
+      "id": "FCF-AGENTS",
+      "role": "AGENTS_CONTRACT",
+      "title": "FCF_AGENTS_MD",
+      "url": "https://docs.google.com/document/d/PROJECT_SOURCE_ID_REDACTED/edit",
+      "source_system": "google_drive",
+      "authority": "RND_CANON",
+      "content_type": "native_document",
+      "required": false
+    }
+  ],
+  "rule": "LIVE_CANON_OVER_CACHED_PROJECTION",
+  "revisions": "MUST_BE_RESOLVED_AT_EXECUTION_FOR_MUTATION",
+  "boot_order": [
+    "FCF-START",
+    "FCF-HANDOFF"
+  ]
+}

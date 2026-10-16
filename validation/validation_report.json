@@ -1,0 +1,134 @@
+{
+  "schema": "fcf.validation.p04.v1",
+  "date_utc": "2026-10-16T08:17:07.092122+00:00",
+  "release": "FCF-v0.4.0-KBI-reference-candidate",
+  "local_gate": "PASS",
+  "unit_tests_passed": 99,
+  "new_kbi_negative_cases": 24,
+  "cross_project_candidate_generator_tests": 6,
+  "kbi_structural": "PASS_STRUCTURAL_ONLY",
+  "schema_specimens": 3,
+  "cli_end_to_end": true,
+  "cli_canonical_write_performed": false,
+  "cli_semantic_truth": "NOT_PROVEN",
+  "http_simulated_contract_tests": "PASS_LOCAL_EMULATION",
+  "openviking_native_live": "NOT_RUN",
+  "repository_created": "NOT_CREATED",
+  "github_public_release": "NOT_PUBLISHED",
+  "public_repo_provider_lookup": "NOT_FOUND_404",
+  "repo_create_blocker": "GITHUB_CONNECTOR_HAS_NO_CREATE_REPOSITORY_ACTION_AND_BROWSER_CREDITS_UNAVAILABLE",
+  "drive_live_documents": "PROVIDER_VERIFIED_INTERNAL_ONLY_REDACTED_HERE",
+  "real_authorization_enforced": "NOT_ESTABLISHED",
+  "license_clearance": "PENDING",
+  "production_approved": false,
+  "commands": [
+    {
+      "name": "unittest",
+      "argv": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "kbi_structural",
+      "argv": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "fcf.kbi.validate",
+        "--root",
+        ".kbi"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "schema_specimens",
+      "argv": [
+        "/opt/pyvenv/bin/python",
+        "validation/check_schemas.py"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "scientific_conflicts",
+      "argv": [
+        "/opt/pyvenv/bin/python",
+        "cases/dft_reference_case.py"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "capture",
+      "argv": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "fcf",
+        "capture",
+        "--store",
+        "/tmp/tmp_e5hija_",
+        "--file",
+        "fixtures/hypotheses.txt",
+        "--project",
+        "dft-research",
+        "--uri",
+        "fixture://dft/hypotheses",
+        "--revision",
+        "fixture-1"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "verify",
+      "argv": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "fcf",
+        "verify",
+        "--store",
+        "/tmp/tmp_e5hija_",
+        "--record",
+        "dccd7d92cb93f0f93b1885d7805b4820e071428356d177e683c675d6d333d0be"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "propose",
+      "argv": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "fcf",
+        "propose",
+        "--store",
+        "/tmp/tmp_e5hija_",
+        "--record",
+        "dccd7d92cb93f0f93b1885d7805b4820e071428356d177e683c675d6d333d0be",
+        "--claim",
+        "Provisional hypothesis, not a theorem"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "assess",
+      "argv": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "fcf",
+        "assess",
+        "--store",
+        "/tmp/tmp_e5hija_",
+        "--proposal",
+        "/tmp/tmp_e5hija_/proposal.json",
+        "--principal-id",
+        "demo-reviewer",
+        "--role",
+        "reviewer"
+      ],
+      "returncode": 0
+    }
+  ]
+}

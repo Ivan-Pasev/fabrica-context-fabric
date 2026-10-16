@@ -1,0 +1,10 @@
+{
+  "purpose": "Synthetic project, no actual research facts",
+  "project_id": "fcf-p02-synthetic",
+  "expected_user_id": "fcf-researcher",
+  "foreign_expected_user": "fcf-outsider",
+  "resource_uri": "viking://resources/fcf-p02-synthetic",
+  "sentinel": "FRONTIER-FCF-P02-SENTINEL-7d3e9",
+  "claim_status": "NOT_PROVEN",
+  "authority": "OBSERVED_ONLY"
+}

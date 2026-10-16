@@ -1,2 +1,3 @@
-# Security
-Experimental reference only; not a production authentication or authorization system. No genuine OpenViking server, real tenant ACLs, secret-storage or crash recovery certification has been tested here. Do not disclose credentials or sensitive vulnerabilities in public issues; use a verified private maintainer channel.
+# Security policy — FCF reference implementation
+
+**Scope:** independent research/reference code; **not production-certified**. Do not put API keys or private canonical Drive data in issues. For potentially exploitable findings, contact repository maintainers privately using GitHub's private security reporting feature when enabled; if not available, contact the maintainers via their published private channel. Avoid disclosing exploitable details publicly before coordination. Evidence of local unit-test success is not a replacement for real identity, ACL, index or recovery tests. FCF has no standing claim of immunity to prompt injection.

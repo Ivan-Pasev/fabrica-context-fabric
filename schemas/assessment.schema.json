@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "$id": "https://schemas.fabrica.local/fcf.assessment.v1.json",
+  "title": "Non-authorizing structural assessment",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "proposal_sha256",
+    "principal_id",
+    "principal_role",
+    "outcome",
+    "reasons",
+    "canonical_write_performed",
+    "semantic_truth",
+    "assessment_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "fcf.assessment.v1"
+    },
+    "proposal_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "principal_id": {
+      "type": "string"
+    },
+    "principal_role": {
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "HOLD",
+        "ELIGIBLE_FOR_HUMAN_REVIEW"
+      ]
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "canonical_write_performed": {
+      "const": false
+    },
+    "semantic_truth": {
+      "const": "NOT_PROVEN"
+    },
+    "assessment_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

@@ -1,0 +1,3 @@
+PASS source-record.schema.json
+PASS memory-proposal.schema.json
+PASS assessment.schema.json

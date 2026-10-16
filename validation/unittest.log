@@ -1,0 +1,36 @@
+test_21_github_pinned_capture (test_fcf.AdapterTests.test_21_github_pinned_capture) ... ok
+test_22_github_unpinned_rejected (test_fcf.AdapterTests.test_22_github_unpinned_rejected) ... ok
+test_23_github_traversal_rejected (test_fcf.AdapterTests.test_23_github_traversal_rejected) ... ok
+test_24_drive_export_provenance_is_observed (test_fcf.AdapterTests.test_24_drive_export_provenance_is_observed) ... ok
+test_25_remote_plaintext_forbidden (test_fcf.AdapterTests.test_25_remote_plaintext_forbidden) ... ok
+test_26_local_find_scoped (test_fcf.AdapterTests.test_26_local_find_scoped) ... ok
+test_27_retrieval_escape_blocked (test_fcf.AdapterTests.test_27_retrieval_escape_blocked) ... ok
+test_28_remote_key_required (test_fcf.AdapterTests.test_28_remote_key_required) ... ok
+test_29_target_prefix_collision_blocked (test_fcf.AdapterTests.test_29_target_prefix_collision_blocked) ... ok
+test_30_unlisted_remote_host_rejected (test_fcf.AdapterTests.test_30_unlisted_remote_host_rejected) ... ok
+test_31_operator_allowlist_enforced (test_fcf.AdapterTests.test_31_operator_allowlist_enforced) ... ok
+test_01_valid_observed_snapshot (test_fcf.CoreTests.test_01_valid_observed_snapshot) ... ok
+test_02_digest_mismatch (test_fcf.CoreTests.test_02_digest_mismatch) ... ok
+test_03_record_metadata_tampering (test_fcf.CoreTests.test_03_record_metadata_tampering) ... ok
+test_04_forged_canonical_source (test_fcf.CoreTests.test_04_forged_canonical_source) ... ok
+test_05_invalid_project_id (test_fcf.CoreTests.test_05_invalid_project_id) ... ok
+test_06_missing_revision (test_fcf.CoreTests.test_06_missing_revision) ... ok
+test_07_no_empty_source (test_fcf.CoreTests.test_07_no_empty_source) ... ok
+test_08_large_source_rejected (test_fcf.CoreTests.test_08_large_source_rejected) ... ok
+test_09_immutable_capture_and_roundtrip (test_fcf.CoreTests.test_09_immutable_capture_and_roundtrip) ... ok
+test_10_store_tamper_detected (test_fcf.CoreTests.test_10_store_tamper_detected) ... ok
+test_11_injected_crash_leaves_no_new_artifact (test_fcf.CoreTests.test_11_injected_crash_leaves_no_new_artifact) ... ok
+test_12_cross_project_proposal_rejected (test_fcf.CoreTests.test_12_cross_project_proposal_rejected) ... ok
+test_13_zero_source_proposal_rejected (test_fcf.CoreTests.test_13_zero_source_proposal_rejected) ... ok
+test_14_declared_conflict_hold (test_fcf.CoreTests.test_14_declared_conflict_hold) ... ok
+test_15_untrusted_role_hold (test_fcf.CoreTests.test_15_untrusted_role_hold) ... ok
+test_16_valid_proposal_still_not_authorization (test_fcf.CoreTests.test_16_valid_proposal_still_not_authorization) ... ok
+test_17_missing_evidence_hold (test_fcf.CoreTests.test_17_missing_evidence_hold) ... ok
+test_18_proposal_tampering_hold (test_fcf.CoreTests.test_18_proposal_tampering_hold) ... ok
+test_19_prompt_injection_not_executed_or_promoted (test_fcf.CoreTests.test_19_prompt_injection_not_executed_or_promoted) ... ok
+test_20_digest_stability (test_fcf.CoreTests.test_20_digest_stability) ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 0.010s
+
+OK

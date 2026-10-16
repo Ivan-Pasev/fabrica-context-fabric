@@ -1,0 +1,8 @@
+{
+  "local_gate": "PASS",
+  "unit_test_count": 50,
+  "schema_specimens_validated": 3,
+  "cli_end_to_end": true,
+  "cli_assessment_outcome": "ELIGIBLE_FOR_HUMAN_REVIEW",
+  "actual_server_integration": "NOT_RUN"
+}

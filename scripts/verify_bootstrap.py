@@ -46,7 +46,7 @@ def check(root=ROOT):
     for name, gate in gate_doc["gates"].items():
         if gate.get("default") != "HOLD" or gate.get("enabled_by_this_package") is not False or not gate.get("required"):
             raise ValueError("unsafe gate " + name)
-    if any(c["status"] not in {"HOLD","PENDING_REMOTE_CI"} for c in claims["claims"]):
+    if any(c["status"] not in {"HOLD","PENDING_REMOTE_CI","PENDING_EXECUTION"} for c in claims["claims"]):
         raise ValueError("unauthorized status upgrade")
     return {"status":"STRUCTURAL_PASS_ONLY","nodes":len(ids),"edges":len(lattice["edges"]),"gates":len(gate_doc["gates"])}
 

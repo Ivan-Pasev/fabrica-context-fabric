@@ -3,24 +3,39 @@
   "project_id": "fcf-research",
   "claims": [
     {
-      "id": "FCF-P06-BOOTSTRAP",
-      "status": "PENDING_REMOTE_CI",
-      "scope": "this bootstrap only"
+      "id": "FCF-P04-LOCAL",
+      "statement": "Reference FCF local unit and simulated HTTP contract tests pass",
+      "evidence": [
+        "E2_MECHANICALLY_VERIFIED"
+      ],
+      "status": "PENDING_EXECUTION",
+      "scope": "local only",
+      "source_id": "FCF-HANDOFF"
     },
     {
-      "id": "FCF-P04-FULL-SOURCE",
+      "id": "FCF-P04-NATIVE",
+      "statement": "Genuine upstream OpenViking runtime is verified",
+      "evidence": [
+        "E0_ASSERTION"
+      ],
       "status": "HOLD",
-      "scope": "87-file public archive + 99 tests"
+      "scope": "genuine server only",
+      "source_id": "OV-PIN"
     },
     {
-      "id": "FCF-OV-NATIVE",
+      "id": "FCF-P04-PUBLISH",
+      "statement": "GitHub v0.4.0 release is published",
+      "evidence": [
+        "E0_ASSERTION"
+      ],
       "status": "HOLD",
-      "scope": "actual server"
-    },
-    {
-      "id": "FCF-PRODUCTION",
-      "status": "HOLD",
-      "scope": "security certification"
+      "scope": "remote release only",
+      "source_id": "FCF-HANDOFF"
     }
+  ],
+  "boundary": "No evidence axis alone upgrades authority. Unverified deployment claims remain HOLD.",
+  "blocked_claims": [
+    "FCF-P04-NATIVE",
+    "FCF-P04-PUBLISH"
   ]
 }

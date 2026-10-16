@@ -1,1 +1,7 @@
-FABRICA Context Fabric — independent Apache-2.0 licensed project bootstrap. OpenViking remains a separately licensed AGPL-3.0 upstream dependency; no OpenViking implementation is copied into this repository. KBI runtime and claim-boundary specifications are proposals and do not constitute external certification.
+# Attribution and boundary notice
+
+This FCF reference implementation is independently authored for FAB.SYS / GILC research use, 2026. Its own code is licensed under Apache License 2.0 (see `LICENSE`).
+
+The repository **does not distribute OpenViking source code**. OpenViking is an upstream project of Volcano Engine / ByteDance and contributors. The reference package points to its public API and source documentation, and records upstream licensing independently. Its public main code is AGPL-3.0; components can have different licenses. Do not represent FCF's license as a license grant for OpenViking.
+
+Any deployed combination, copied code, derivative work, or network service must undergo its own legal compliance review. No trademark or affiliation with Volcano Engine is implied.

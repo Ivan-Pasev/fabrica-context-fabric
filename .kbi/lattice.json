@@ -1,7 +1,7 @@
 {
   "schema": "fcf.kbi.lattice.v1",
   "project_id": "fcf-research",
-  "version": "0.4.0-bootstrap",
+  "version": "0.4.0",
   "nodes": [
     {
       "id": "sense",
@@ -91,6 +91,18 @@
       "relation": "PREREQUISITE"
     }
   ],
+  "non_executable_links": [
+    {
+      "from": "FCF-START",
+      "to": "FCF-HANDOFF",
+      "relation": "READ_FIRST"
+    },
+    {
+      "from": "FCF-HANDOFF",
+      "to": "FCF-WHITEPAPER",
+      "relation": "CONTEXT"
+    }
+  ],
   "acyclic_required": true,
-  "semantics": "Ordered prerequisite graph; no permission or publication authority"
+  "semantics": "Partial order of prerequisites; not agent self-authorization"
 }
