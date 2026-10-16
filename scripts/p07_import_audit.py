@@ -42,6 +42,13 @@ P09_REVIEWED_BLOBS = {
   "docs/P09_EVIDENCE_AND_LICENSE_GATES.md": "009008a74f9cfb2475117326dbab379307f8c688"
 }
 
+P10_REVIEWED_BLOBS = {
+  "scripts/p10_native_install_smoke.py": "ab23174858e8d1e86491c38d2319b9fa2b1c2da1",
+  "tests/test_p10_native_install_smoke.py": "7c5147324afb2150f44dd950bc8257856b08010f",
+  ".github/workflows/p10-pinned-upstream-install.yml": "6673a3c127aba7b91e5bf7adc7fa6d1b6c240369",
+  "docs/P10_PINNED_UPSTREAM_INSTALL_AND_LIMITS.md": "667ed846a2ac61cf9bd960d3acca63942117eb0e"
+}
+
 def git_blob_sha(data: bytes) -> str:
     return hashlib.sha1(b'blob ' + str(len(data)).encode('ascii') + bytes([0]) + data).hexdigest()
 
@@ -113,6 +120,10 @@ def audit_repo(root: pathlib.Path) -> dict:
         if rel in P09_REVIEWED_BLOBS:
             if git_blob_sha(data) != P09_REVIEWED_BLOBS[rel]:
                 raise ImportAuditError('P09 addon blob differs from reviewed pin: ' + rel)
+            continue
+        if rel in P10_REVIEWED_BLOBS:
+            if git_blob_sha(data) != P10_REVIEWED_BLOBS[rel]:
+                raise ImportAuditError('P10 addon blob differs from reviewed pin: ' + rel)
             continue
         files[rel] = data
     result = _verify(files)
