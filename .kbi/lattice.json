@@ -1,0 +1,96 @@
+{
+  "schema": "fcf.kbi.lattice.v1",
+  "project_id": "fcf-research",
+  "version": "0.4.0-bootstrap",
+  "nodes": [
+    {
+      "id": "sense",
+      "kernel_namespace": "KBI_KERNEL",
+      "lattice_level": 0
+    },
+    {
+      "id": "classify",
+      "kernel_namespace": "KBI_EPISTEMIC",
+      "lattice_level": 1
+    },
+    {
+      "id": "route",
+      "kernel_namespace": "KBI_KERNEL",
+      "lattice_level": 2
+    },
+    {
+      "id": "synthesize",
+      "kernel_namespace": "KBI_KERNEL",
+      "lattice_level": 3
+    },
+    {
+      "id": "redteam",
+      "kernel_namespace": "KBI_EPISTEMIC",
+      "lattice_level": 4
+    },
+    {
+      "id": "verify",
+      "kernel_namespace": "KBI_EPISTEMIC",
+      "lattice_level": 5
+    },
+    {
+      "id": "review",
+      "kernel_namespace": "KBI_KERNEL",
+      "lattice_level": 6
+    },
+    {
+      "id": "update_handoff",
+      "kernel_namespace": "KBI_KERNEL",
+      "lattice_level": 7
+    },
+    {
+      "id": "publish_candidate",
+      "kernel_namespace": "KBI_KERNEL",
+      "lattice_level": 8
+    }
+  ],
+  "edges": [
+    {
+      "from": "sense",
+      "to": "classify",
+      "relation": "PREREQUISITE"
+    },
+    {
+      "from": "classify",
+      "to": "route",
+      "relation": "PREREQUISITE"
+    },
+    {
+      "from": "route",
+      "to": "synthesize",
+      "relation": "PREREQUISITE"
+    },
+    {
+      "from": "synthesize",
+      "to": "redteam",
+      "relation": "PREREQUISITE"
+    },
+    {
+      "from": "redteam",
+      "to": "verify",
+      "relation": "PREREQUISITE"
+    },
+    {
+      "from": "verify",
+      "to": "review",
+      "relation": "PREREQUISITE"
+    },
+    {
+      "from": "review",
+      "to": "update_handoff",
+      "relation": "PREREQUISITE"
+    },
+    {
+      "from": "update_handoff",
+      "to": "publish_candidate",
+      "relation": "PREREQUISITE"
+    }
+  ],
+  "acyclic_required": true,
+  "semantics": "Ordered prerequisite graph; no permission or publication authority"
+}
