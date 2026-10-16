@@ -56,6 +56,13 @@ P11_REVIEWED_BLOBS = {
   "docs/P11_NATIVE_BOOT_PROTOCOL.md": "6629b769766a86bb202fae65a3fecea345809f05"
 }
 
+P11_CORE_REVIEWED_BLOBS = {
+  "scripts/p11_core_init_probe.py": "8fde50eaa08979af90d313c80c066799e415100c",
+  "tests/test_p11_core_init_probe.py": "cdddf3afc8dc0bc488b982fb94ea79d9a7d98aa4",
+  ".github/workflows/p11-core-init-diagnostic.yml": "c9a0beb391652d45f8791294f098f1e6293e61af",
+  "docs/P11_DIRECT_CORE_INIT_DIAGNOSTIC.md": "7578a20c7f3f6acf44f86e1dc81a03882997c84f"
+}
+
 def git_blob_sha(data: bytes) -> str:
     return hashlib.sha1(b'blob ' + str(len(data)).encode('ascii') + bytes([0]) + data).hexdigest()
 
@@ -135,6 +142,10 @@ def audit_repo(root: pathlib.Path) -> dict:
         if rel in P11_REVIEWED_BLOBS:
             if git_blob_sha(data) != P11_REVIEWED_BLOBS[rel]:
                 raise ImportAuditError('P11 addon blob differs from reviewed pin: ' + rel)
+            continue
+        if rel in P11_CORE_REVIEWED_BLOBS:
+            if git_blob_sha(data) != P11_CORE_REVIEWED_BLOBS[rel]:
+                raise ImportAuditError('P11 core probe differs from reviewed pin: ' + rel)
             continue
         files[rel] = data
     result = _verify(files)
