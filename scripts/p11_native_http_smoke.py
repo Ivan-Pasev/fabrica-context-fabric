@@ -18,6 +18,29 @@ import urllib.request
 
 EXPECTED = "20f9c11362ad16193b0daa4a414e1095061af427"
 
+def classify_startup_failure(log_content: str) -> str:
+    """Only disclose a predefined failure class. Never export raw server logs."""
+    text = log_content[-65536:].lower()
+    groups = (
+        ("CONFIG_VALIDATION", ("validationerror", "configuration error", "invalid server config", "failed to load openviking server configuration", "extra inputs are not permitted")),
+        ("AUTH_CONFIGURATION", ("authentication health check", "root_api_key", "api key manager")),
+        ("STORAGE_INITIALIZATION", ("initialize storage", "agfs error", "storage init", "vectordb", "persiststore")),
+        ("MODEL_CONFIGURATION", ("embedding", "vlm", "model provider", "api_base")),
+        ("LISTENER_BIND_FAILURE", ("address already in use", "error while attempting to bind", "port is already in use")),
+        ("PYTHON_IMPORT_FAILURE", ("modulenotfounderror", "importerror", "cannot import name")),
+    )
+    for name, patterns in groups:
+        if any(term in text for term in patterns):
+            return name
+    return "UNCLASSIFIED_PROCESS_EXIT"
+
+
+def port_in_use(port: int) -> bool:
+    """Refuse stale/foreign localhost services; never attribute them to this child."""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(0.5)
+        return sock.connect_ex(("127.0.0.1", port)) == 0
+
 
 def config(workspace: str, port: int, key: str) -> dict:
     if not key or len(key) < 40:
@@ -46,7 +69,8 @@ def observe_url(url: str, key: str | None = None, timeout: float = 2.0) -> tuple
     if key is not None:
         headers["X-API-Key"] = key
     try:
-        with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=timeout) as resp:
+        opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+        with opener.open(urllib.request.Request(url, headers=headers), timeout=timeout) as resp:
             status = resp.status
             raw = resp.read(16385)
     except urllib.error.HTTPError as ex:
@@ -100,6 +124,8 @@ def run(*, execute: bool, upstream_path: Path, timeout_s: float = 90.0, port: in
         sha = None
     if sha != EXPECTED:
         return {"phase": "P11", "status": "HOLD", "reason_code": "SOURCE_SHA_MISMATCH", "production_authorized": False}, 2
+    if port < 1024 or port > 65535 or port_in_use(port):
+        return {"phase": "P11", "status": "HOLD", "reason_code": "PORT_UNSAFE_OR_OCCUPIED", "production_authorized": False}, 2
     key = secrets.token_urlsafe(48)
     root = f"http://127.0.0.1:{port}"
     with tempfile.TemporaryDirectory(prefix="fcf-p11-synthetic-") as tmp:
@@ -133,6 +159,19 @@ def run(*, execute: bool, upstream_path: Path, timeout_s: float = 90.0, port: in
                 report["server_started"] = bool(report["child_alive_at_probe"] and health[0] == 200)
                 report["process_identity"] = "SUBPROCESS_LAUNCHED_FROM_PINNED_CHECKOUT_ENVIRONMENT_NOT_INDEPENDENTLY_ATTESTED"
                 report["port"] = port
+                if not report["child_alive_at_probe"] or not report["server_started"]:
+                    report["status"] = "HOLD"
+                    report["reason_code"] = "CHILD_EXITED_OR_HTTP_NOT_READY"
+                    logfile.flush()
+                    try:
+                        report["startup_failure_class"] = classify_startup_failure(
+                            Path(tmp, "server.log").read_bytes()[-65536:].decode("utf-8", "replace")
+                        )
+                    except OSError:
+                        report["startup_failure_class"] = "LOG_UNAVAILABLE"
+                else:
+                    report["startup_failure_class"] = "NOT_APPLICABLE"
+                # Raw server logs may contain credentials. Only fixed classification is returned.
                 return report, 0 if report["status"] == "OBSERVED_PASS" else 2
             finally:
                 if proc.poll() is None:

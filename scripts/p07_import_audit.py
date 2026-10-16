@@ -50,8 +50,8 @@ P10_REVIEWED_BLOBS = {
 }
 
 P11_REVIEWED_BLOBS = {
-  "scripts/p11_native_http_smoke.py": "2b4d1a4b79e409f3b91eeeb989ebaa849c0e8412",
-  "tests/test_p11_native_http_smoke.py": "13715da4ffc9a12bad8766ca15cda80732544704",
+  "scripts/p11_native_http_smoke.py": "e33d8d0491fe210575ad054905ecb58a51b25a2b",
+  "tests/test_p11_native_http_smoke.py": "99c24a822081d4cf2a2142dd95b35bc2d1954159",
   ".github/workflows/p11-native-loopback-http.yml": "65c8cb62ef6f9d54d83bdfa5b47702c25de6b379",
   "docs/P11_NATIVE_BOOT_PROTOCOL.md": "aa2f96f2238a7157d94ee5776a7ec1a531594342"
 }

@@ -58,5 +58,24 @@ class P11SmokeGateTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             p11.run(execute=True, upstream_path=Path("/none"), timeout_s=1)
 
+    def test_startup_diagnostic_classification_without_raw_secrets(self):
+        secret="operator-only-unpublished-secret-value"
+        failure=p11.classify_startup_failure("ValidationError: unknown config\\n" + secret)
+        self.assertEqual(failure, "CONFIG_VALIDATION")
+        self.assertNotIn(secret, failure)
+    def test_startup_unknown_error_has_fixed_code(self):
+        self.assertEqual(p11.classify_startup_failure("something private x_42"), "UNCLASSIFIED_PROCESS_EXIT")
+    def test_native_vector_failure_classified_without_payload(self):
+        self.assertEqual(p11.classify_startup_failure("PersistStore initialize failed"), "STORAGE_INITIALIZATION")
+    def test_http_proxy_bypass_is_configured(self):
+        import inspect
+        self.assertIn("ProxyHandler({})", inspect.getsource(p11.observe_url))
+    def test_port_guard_detects_existing_listener(self):
+        import socket
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.bind(("127.0.0.1", 0))
+            sock.listen(1)
+            self.assertTrue(p11.port_in_use(sock.getsockname()[1]))
+
 if __name__ == "__main__":
     unittest.main()
