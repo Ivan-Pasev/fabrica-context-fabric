@@ -25,7 +25,7 @@ def classify_startup_failure(log_content: str) -> str:
         ("CONFIG_VALIDATION", ("validationerror", "configuration error", "invalid server config", "failed to load openviking server configuration", "extra inputs are not permitted")),
         ("AUTH_CONFIGURATION", ("authentication health check", "root_api_key", "api key manager")),
         ("STORAGE_INITIALIZATION", ("initialize storage", "agfs error", "storage init", "vectordb", "persiststore")),
-        ("MODEL_CONFIGURATION", ("embedding", "vlm", "model provider", "api_base")),
+        ("MODEL_CONFIGURATION", ("embedding provider requires", "vlm provider requires", "failed to initialize embedding", "model provider unavailable", "embedding api connection failure")),
         ("LISTENER_BIND_FAILURE", ("address already in use", "error while attempting to bind", "port is already in use")),
         ("PYTHON_IMPORT_FAILURE", ("modulenotfounderror", "importerror", "cannot import name")),
     )
@@ -33,6 +33,36 @@ def classify_startup_failure(log_content: str) -> str:
         if any(term in text for term in patterns):
             return name
     return "UNCLASSIFIED_PROCESS_EXIT"
+
+
+
+def schema_preflight(path: Path) -> dict:
+    """Execute real v0.5.0 Pydantic/config validators; never expose errors."""
+    try:
+        from openviking.server.config import load_server_config, validate_server_config
+        from openviking_cli.utils.config.open_viking_config import OpenVikingConfig
+        server_config = load_server_config(str(path))
+        document = json.loads(path.read_text(encoding="utf-8"))
+        model_config = OpenVikingConfig.from_dict(document)
+        validate_server_config(server_config)
+        validated = (
+            server_config.get_effective_auth_mode() == "api_key"
+            and server_config.host == "127.0.0.1"
+            and model_config.storage.workspace == document["storage"]["workspace"]
+            and model_config.embedding.dense is not None
+        )
+        return {"status": "PASS" if validated else "HOLD",
+                "reason_code": "UPSTREAM_CONFIG_ACCEPTED" if validated else "CONFIG_INVARIANT_MISMATCH",
+                "exception_kind": "NONE"}
+    except BaseException as exc:
+        # Only fixed names; do not return config values, freeform errors, raw logs, or paths.
+        kind = type(exc).__name__
+        if kind not in {"ValidationError", "ValueError", "TypeError", "KeyError",
+                        "ImportError", "ModuleNotFoundError", "SystemExit",
+                        "RuntimeError", "AttributeError", "OSError"}:
+            kind = "OTHER"
+        return {"status": "HOLD", "reason_code": "UPSTREAM_CONFIG_PREFLIGHT_FAILED",
+                "exception_kind": kind}
 
 
 def port_in_use(port: int) -> bool:
@@ -132,6 +162,12 @@ def run(*, execute: bool, upstream_path: Path, timeout_s: float = 90.0, port: in
         conf = Path(tmp, "ov.conf")
         conf.write_text(json.dumps(config(str(Path(tmp, "workspace")), port, key)), encoding="utf-8")
         os.chmod(conf, 0o600)
+        preflight = schema_preflight(conf)
+        if preflight["status"] != "PASS":
+            return {"phase": "P11", "status": "HOLD",
+                    "reason_code": "UPSTREAM_CONFIG_PREFLIGHT_FAILED",
+                    "config_preflight": preflight, "server_started": False,
+                    "production_authorized": False}, 2
         with open(Path(tmp, "server.log"), "wb") as logfile:
             try:
                 proc = subprocess.Popen(["openviking-server", "--config", str(conf),
@@ -158,6 +194,7 @@ def run(*, execute: bool, upstream_path: Path, timeout_s: float = 90.0, port: in
                 report["child_alive_at_probe"] = proc.poll() is None
                 report["server_started"] = bool(report["child_alive_at_probe"] and health[0] == 200)
                 report["process_identity"] = "SUBPROCESS_LAUNCHED_FROM_PINNED_CHECKOUT_ENVIRONMENT_NOT_INDEPENDENTLY_ATTESTED"
+                report["config_preflight"] = preflight
                 report["port"] = port
                 if not report["child_alive_at_probe"] or not report["server_started"]:
                     report["status"] = "HOLD"

@@ -77,5 +77,78 @@ class P11SmokeGateTests(unittest.TestCase):
             sock.listen(1)
             self.assertTrue(p11.port_in_use(sock.getsockname()[1]))
 
+
+    def test_missing_native_configuration_module_holds(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory, "ov.conf")
+            path.write_text("{}", encoding="utf-8")
+            result = p11.schema_preflight(path)
+            # Reference CI deliberately has no OpenViking; fail closed, no details.
+            self.assertEqual(result["status"], "HOLD")
+            self.assertEqual(result["reason_code"], "UPSTREAM_CONFIG_PREFLIGHT_FAILED")
+            self.assertIn(result["exception_kind"], {"ModuleNotFoundError", "ImportError"})
+
+    def test_schema_preflight_accepts_valid_mocked_upstream_validator(self):
+        import sys, types, json, tempfile
+        from unittest.mock import patch
+        pkg_names = ("openviking", "openviking.server", "openviking.server.config",
+                     "openviking_cli", "openviking_cli.utils", "openviking_cli.utils.config",
+                     "openviking_cli.utils.config.open_viking_config")
+        mods = {name: types.ModuleType(name) for name in pkg_names}
+        for name, value in mods.items():
+            if name not in ("openviking.server.config", "openviking_cli.utils.config.open_viking_config"):
+                value.__path__ = []
+        class ServerCfg:
+            host = "127.0.0.1"
+            def get_effective_auth_mode(self):
+                return "api_key"
+        class OVConfig:
+            @classmethod
+            def from_dict(cls, doc):
+                return types.SimpleNamespace(
+                    storage=types.SimpleNamespace(workspace=doc["storage"]["workspace"]),
+                    embedding=types.SimpleNamespace(dense=object()))
+        mods["openviking.server.config"].load_server_config = lambda path: ServerCfg()
+        mods["openviking.server.config"].validate_server_config = lambda cfg: None
+        mods["openviking_cli.utils.config.open_viking_config"].OpenVikingConfig = OVConfig
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory, "ov.conf")
+            path.write_text(json.dumps({"storage": {"workspace": "/tmp/synthetic"}}))
+            with patch.dict(sys.modules, mods):
+                result = p11.schema_preflight(path)
+        self.assertEqual(result["status"], "PASS")
+        self.assertEqual(result["exception_kind"], "NONE")
+
+    def test_incidental_embedding_word_not_root_cause(self):
+        self.assertEqual(p11.classify_startup_failure(
+            "Traceback at any/embedding/module.py; TypeError: unrelated"),
+            "UNCLASSIFIED_PROCESS_EXIT")
+
+    def test_schema_preflight_does_not_leak_configuration_error(self):
+        import sys, types, json, tempfile
+        from unittest.mock import patch
+        mods = {k: types.ModuleType(k) for k in (
+            "openviking", "openviking.server", "openviking.server.config",
+            "openviking_cli", "openviking_cli.utils", "openviking_cli.utils.config",
+            "openviking_cli.utils.config.open_viking_config")}
+        for name, mod in mods.items():
+            if name not in ("openviking.server.config", "openviking_cli.utils.config.open_viking_config"):
+                mod.__path__ = []
+        secret = "sensitive-never-export-this"
+        def bad_loader(path):
+            raise ValueError(secret)
+        mods["openviking.server.config"].load_server_config = bad_loader
+        mods["openviking.server.config"].validate_server_config = lambda x: None
+        mods["openviking_cli.utils.config.open_viking_config"].OpenVikingConfig = object
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory, "ov.conf")
+            path.write_text("{}")
+            with patch.dict(sys.modules, mods):
+                report = p11.schema_preflight(path)
+        self.assertEqual(report["status"], "HOLD")
+        self.assertEqual(report["exception_kind"], "ValueError")
+        self.assertNotIn(secret, str(report))
+
 if __name__ == "__main__":
     unittest.main()

@@ -26,3 +26,17 @@ python scripts/p11_native_http_smoke.py --upstream-path /tmp/does-not-exist
 
 - Exit `0`, status `OBSERVED_PASS`: bounded local **real-server** health+ready+anonymous-auth-denial observations only.
 - Exit `2`, status `HOLD`: missing source/config/readiness/auth denial or process failed. Preserve the failed CI step for a follow-on P11 repair; do not merge failed CI.
+
+## P11.2 — schema-first diagnostic (2026-10-16)
+
+Native P11 CI [38941183995](https://github.com/Ivan-Pasev/fabrica-context-fabric/actions/runs/38941183995) completed **FAIL/HOLD**. The real child exited without returning health or readiness; the first-generation fixed-label log matcher returned `MODEL_CONFIGURATION`. This label is **heuristic, not root-cause proof**: a traceback containing an incidental word such as `embedding` could trigger it. In addition, because real upstream configuration validation had not been isolated, the failure could be a schema error, auth mode, storage configuration or service initialization issue.
+
+This follow-up changes the experiment, not the acceptance standard:
+
+1. Generate ephemeral configuration and **invoke real OpenViking v0.5.0** `load_server_config`, `OpenVikingConfig.from_dict` and `validate_server_config` before spawning the server.
+2. Report only a bounded `UPSTREAM_CONFIG_ACCEPTED` or `UPSTREAM_CONFIG_PREFLIGHT_FAILED`, plus a predefined exception class; **never report raw error messages, root key, config bytes or server logs**.
+3. Fail closed when actual schema validation fails; run the real server only after config preflight passes.
+4. Narrow model-error classification so incidental words `embedding`/`vlm` alone do not count as a confirmed provider failure.
+5. Preserve the previously required actual child-liveness, health, readiness and unauthorized-request checks; all real tenant/model/production gates remain HOLD regardless of Pydantic success.
+
+This makes a clear falsifiable distinction between **configuration schema accepted** and **configured server actually started and responded**. It is not model-provider connectivity, source authenticity, ACL or cross-account isolation evidence.
