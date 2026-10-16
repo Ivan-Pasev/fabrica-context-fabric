@@ -1,0 +1,1 @@
+FABRICA Context Fabric — independent Apache-2.0 licensed project bootstrap. OpenViking remains a separately licensed AGPL-3.0 upstream dependency; no OpenViking implementation is copied into this repository. KBI runtime and claim-boundary specifications are proposals and do not constitute external certification.
