@@ -150,5 +150,29 @@ class P11SmokeGateTests(unittest.TestCase):
         self.assertEqual(report["exception_kind"], "ValueError")
         self.assertNotIn(secret, str(report))
 
+
+    def test_bounded_traceback_stage_and_error_type(self):
+        secret="api_key=never-print-my-secret"
+        fake='Traceback (most recent call last):\n  File "/private/openviking/service/core.py", line 27, in initialize\nRuntimeError: '+secret
+        result=p11.traceback_stage_hint(fake)
+        self.assertEqual(result["stage_hint"],"C2_CORE")
+        self.assertEqual(result["exception_kind"],"RuntimeError")
+        self.assertFalse(result["causal_root_established"])
+        self.assertNotIn(secret,str(result))
+        self.assertNotIn("/private",str(result))
+
+    def test_traceback_unknown_fails_closed(self):
+        result=p11.traceback_stage_hint('warning password=secret \nProprietaryError: failed')
+        self.assertEqual(result["stage_hint"],"UNKNOWN")
+        self.assertEqual(result["exception_kind"],"NOT_OBSERVED")
+        self.assertFalse(result["causal_root_established"])
+
+    def test_traceback_prioritizes_last_recognized_frame_only(self):
+        raw='  File "/tmp/openviking/server/bootstrap.py", line 4, in main\n' + \
+            '  File "/tmp/openviking/storage/vectordb/init.py", line 8, in initialize\nValueError: secret'
+        result=p11.traceback_stage_hint(raw)
+        self.assertEqual(result["stage_hint"],"C2_STORAGE")
+        self.assertEqual(result["exception_kind"],"ValueError")
+
 if __name__ == "__main__":
     unittest.main()

@@ -40,3 +40,11 @@ This follow-up changes the experiment, not the acceptance standard:
 5. Preserve the previously required actual child-liveness, health, readiness and unauthorized-request checks; all real tenant/model/production gates remain HOLD regardless of Pydantic success.
 
 This makes a clear falsifiable distinction between **configuration schema accepted** and **configured server actually started and responded**. It is not model-provider connectivity, source authenticity, ACL or cross-account isolation evidence.
+
+## P11.3 — C1 accepted, later startup exited (16 October 2026)
+
+[Actual pinned native run 38949372339](https://github.com/Ivan-Pasev/fabrica-context-fabric/actions/runs/38949372339) completed **FAIL/HOLD** after installing OpenViking v0.5.0. Its runtime checker returned `config_preflight.status=PASS` and `UPSTREAM_CONFIG_ACCEPTED`: upstream-owned JSON/model/server validation accepted the synthetic fixture. An actual child was spawned but died before any health/ready/anonymous/invalid-key response. The previous broad model diagnosis was not reproduced; this attempt reported `UNCLASSIFIED_PROCESS_EXIT`. The cause of the post-schema exit remains unknown.
+
+This next observer adds only bounded, non-sensitive crash metadata: operating-system process exit code (limited integer), a **whitelisted exception type** if present, and the **last recognized subsystem frame category** from a truncated traceback. It excludes raw lines, file paths, exception messages, credentials and tracebacks from both output and public evidence. The frame category is an *execution-location hint, not causal attribution*; absent or unmatched data produces UNKNOWN. An accepted config or matching frame must never be reported as successful storage initialization, authentication, HTTP readiness, model invocation or account ACL enforcement.
+
+P11 baseline remains a negative service test, while public main stays at P10. Review and merge this observer only following remote regression/source integrity checks and native execution evidence; do not disable the existing startup and auth-denial checks.

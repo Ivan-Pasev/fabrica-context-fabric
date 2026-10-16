@@ -65,6 +65,42 @@ def schema_preflight(path: Path) -> dict:
                 "exception_kind": kind}
 
 
+def traceback_stage_hint(log_content: str) -> dict:
+    """Only enumerated traceback metadata, never raw exception details or paths."""
+    stages = []
+    for line in log_content[-65536:].splitlines():
+        if 'File "' not in line or '", line ' not in line:
+            continue
+        value = line.lower().replace("\\", "/")
+        if "openviking/storage/" in value:
+            stages.append("C2_STORAGE")
+        elif "openviking/service/core.py" in value:
+            stages.append("C2_CORE")
+        elif "openviking/server/auth/" in value:
+            stages.append("C3_AUTH")
+        elif "openviking/server/app.py" in value:
+            stages.append("C2_C3_APP_LIFESPAN")
+        elif "openviking/server/bootstrap.py" in value:
+            stages.append("C1_C2_BOOTSTRAP")
+        elif "openviking_cli/utils/config/" in value:
+            stages.append("C1_CONFIG_RELOAD")
+        elif "/uvicorn/" in value:
+            stages.append("C4_HTTP_RUNNER")
+    allowed = {"ValidationError", "ValueError", "RuntimeError", "TypeError",
+               "KeyError", "AttributeError", "ModuleNotFoundError", "ImportError",
+               "OSError", "FileNotFoundError", "PermissionError", "ConnectionError",
+               "TimeoutError", "AssertionError", "NotImplementedError", "SystemExit"}
+    exception = "NOT_OBSERVED"
+    for line in log_content[-65536:].splitlines():
+        candidate = line.strip().split(":", 1)[0]
+        if candidate in allowed:
+            exception = candidate
+    return {"stage_hint": stages[-1] if stages else "UNKNOWN",
+            "exception_kind": exception,
+            "traceback_frame_observed": bool(stages),
+            "causal_root_established": False}
+
+
 def port_in_use(port: int) -> bool:
     """Refuse stale/foreign localhost services; never attribute them to this child."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -199,13 +235,16 @@ def run(*, execute: bool, upstream_path: Path, timeout_s: float = 90.0, port: in
                 if not report["child_alive_at_probe"] or not report["server_started"]:
                     report["status"] = "HOLD"
                     report["reason_code"] = "CHILD_EXITED_OR_HTTP_NOT_READY"
+                    exit_code = proc.poll()
+                    report["child_exit_code"] = exit_code if type(exit_code) is int and -128 <= exit_code <= 255 else None
                     logfile.flush()
                     try:
-                        report["startup_failure_class"] = classify_startup_failure(
-                            Path(tmp, "server.log").read_bytes()[-65536:].decode("utf-8", "replace")
-                        )
+                        safe_log = Path(tmp, "server.log").read_bytes()[-65536:].decode("utf-8", "replace")
+                        report["startup_failure_class"] = classify_startup_failure(safe_log)
+                        report["traceback_hint"] = traceback_stage_hint(safe_log)
                     except OSError:
                         report["startup_failure_class"] = "LOG_UNAVAILABLE"
+                        report["traceback_hint"] = traceback_stage_hint("")
                 else:
                     report["startup_failure_class"] = "NOT_APPLICABLE"
                 # Raw server logs may contain credentials. Only fixed classification is returned.

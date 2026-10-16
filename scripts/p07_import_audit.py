@@ -50,10 +50,10 @@ P10_REVIEWED_BLOBS = {
 }
 
 P11_REVIEWED_BLOBS = {
-  "scripts/p11_native_http_smoke.py": "62fc21b6cf1e772912fe0f0ebf92d0621165e5e6",
-  "tests/test_p11_native_http_smoke.py": "7f82b0518b3170b9a8d290627573579293867a84",
+  "scripts/p11_native_http_smoke.py": "4777ecf8e0fa89d63d5faeb0f9bbdd588cd5c4ae",
+  "tests/test_p11_native_http_smoke.py": "a202c9691e1e581d481375d9ecdbc38741dc8b1f",
   ".github/workflows/p11-native-loopback-http.yml": "65c8cb62ef6f9d54d83bdfa5b47702c25de6b379",
-  "docs/P11_NATIVE_BOOT_PROTOCOL.md": "24d3d9324d67163514ceb810d8cb5366ed89172d"
+  "docs/P11_NATIVE_BOOT_PROTOCOL.md": "6629b769766a86bb202fae65a3fecea345809f05"
 }
 
 def git_blob_sha(data: bytes) -> str:
