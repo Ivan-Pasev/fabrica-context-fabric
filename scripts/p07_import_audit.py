@@ -32,6 +32,16 @@ STAGING_AUDIT_FILES = [
   "tests/bootstrap/test_p08_parity.py"
 ]
 
+P09_REVIEWED_BLOBS = {
+  "src/fcf/integration/p09_gate.py": "0e05ccbabc42c45952d5f1b0bb463a8855e6bfd6",
+  "src/fcf/integration/p09_cli.py": "a85af1889b51c1c0f7de0b27e0c61d76b6ebbe7d",
+  "tests/test_p09_gate.py": "055e1098a7fd01e7dcc845fb0a4522f4510ba6d3",
+  ".github/workflows/p09-observation-contract.yml": "7e0287b7f07362dbf77447d824861927c7f1acd5",
+  "fixtures/p09/synthetic_note.md": "6fe2a08da387aba3f3832c4b399e165cd394caae",
+  "docs/P09_GENUINE_OPENVIKING_RUNBOOK.md": "7743093c8321116977537b170313a1ec9f5d2d8e",
+  "docs/P09_EVIDENCE_AND_LICENSE_GATES.md": "009008a74f9cfb2475117326dbab379307f8c688"
+}
+
 def git_blob_sha(data: bytes) -> str:
     return hashlib.sha1(b'blob ' + str(len(data)).encode('ascii') + bytes([0]) + data).hexdigest()
 
@@ -99,6 +109,10 @@ def audit_repo(root: pathlib.Path) -> dict:
         if rel in PINNED_BOOTSTRAP_BLOBS:
             if git_blob_sha(data) != PINNED_BOOTSTRAP_BLOBS[rel]:
                 raise ImportAuditError('retained bootstrap file changed without reviewed manifest: ' + rel)
+            continue
+        if rel in P09_REVIEWED_BLOBS:
+            if git_blob_sha(data) != P09_REVIEWED_BLOBS[rel]:
+                raise ImportAuditError('P09 addon blob differs from reviewed pin: ' + rel)
             continue
         files[rel] = data
     result = _verify(files)
