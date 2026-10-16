@@ -27,4 +27,11 @@ python scripts/p10_native_install_smoke.py --upstream-path /tmp/does-not-exist
 
 The CI workflow is opt-in for the upstream dependency installation on pull requests that change P10 files, and via `workflow_dispatch` afterwards. It requests read-only repository access and no credentials. Record the **exact GitHub run ID**, installed metadata, upstream SHA and runtime checker result separately from the FCF reference unit suite.
 
-**Current gate:** `P10_UPSTREAM_CLI_SMOKE=PENDING_CI`. `GENUINE_RUNNING_SERVER=HOLD`. `TENANT_ISOLATION=HOLD`. `PRODUCTION=HOLD`.
+## Verified outcome — 16 October 2026
+
+The **real external installation and CLI smoke passed** in the [GitHub Actions run 38922647102](https://github.com/Ivan-Pasev/fabrica-context-fabric/actions/runs/38922647102) on the P10 review commit `afe7bb7d7c02f387a43526427531d86a898ca813`: the runner checked out OpenViking commit `20f9c11362ad16193b0daa4a414e1095061af427`, built and installed `openviking==0.5.0` with 167 packages (including `openviking-sdk==0.1.15`), then successfully executed `openviking-server --help`. The checker emitted `OBSERVED_PASS/PINNED_SOURCE_AND_CLI_READY` and expressly `genuine_server_started=false`, `acl_isolation_verified=false`, `server_process_attested=false`, `production_authorized=false`.
+
+[PR #5](https://github.com/Ivan-Pasev/fabrica-context-fabric/pull/5) was merged into public `main` at `77db01f413e66e07f2c4ccadb814f94174105368`. Post-merge GitHub Actions passed on Python 3.10/3.12, including 119 reference tests and exact 87-file/86-digest original manifest parity. Revalidating this runbook itself does not launch a native OpenViking service.
+
+**Accepted gate:** `P10_UPSTREAM_CLI_SMOKE=OBSERVED_PASS`.
+**Outstanding:** `GENUINE_RUNNING_SERVER=HOLD`; `TENANT_ISOLATION=HOLD`; `PROCESS_ATTESTATION=HOLD`; `MODEL_PROVIDER=HOLD`; `LEGAL_AND_SECURITY=HOLD`; `PRODUCTION=HOLD`. See [P11 native server issue #6](https://github.com/Ivan-Pasev/fabrica-context-fabric/issues/6).

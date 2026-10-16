@@ -46,7 +46,7 @@ P10_REVIEWED_BLOBS = {
   "scripts/p10_native_install_smoke.py": "ab23174858e8d1e86491c38d2319b9fa2b1c2da1",
   "tests/test_p10_native_install_smoke.py": "7c5147324afb2150f44dd950bc8257856b08010f",
   ".github/workflows/p10-pinned-upstream-install.yml": "6673a3c127aba7b91e5bf7adc7fa6d1b6c240369",
-  "docs/P10_PINNED_UPSTREAM_INSTALL_AND_LIMITS.md": "667ed846a2ac61cf9bd960d3acca63942117eb0e"
+  "docs/P10_PINNED_UPSTREAM_INSTALL_AND_LIMITS.md": "9c83773458876f602846c292807282e8e4cc7d29"
 }
 
 def git_blob_sha(data: bytes) -> str:
