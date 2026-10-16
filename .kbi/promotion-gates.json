@@ -4,37 +4,49 @@
   "gates": {
     "CANONICAL_DOC_EDIT": {
       "default": "HOLD",
-      "enabled_by_this_package": false,
       "required": [
-        "live_revision",
-        "scope",
-        "operator_authorization",
+        "live_revision_read",
+        "project_scope",
+        "explicit_authorization",
         "diff_review",
-        "readback"
-      ]
+        "evidence_trace",
+        "revision_guard"
+      ],
+      "enabled_by_this_package": false
     },
     "GITHUB_RELEASE": {
       "default": "HOLD",
-      "enabled_by_this_package": false,
       "required": [
-        "complete_public_source",
+        "repository_exists",
+        "permission_verified",
         "license_review",
-        "remote_ci",
-        "privacy_check",
-        "maintainer_approval"
-      ]
+        "all_local_tests_pass",
+        "no_secrets",
+        "public_documentation_review",
+        "human_release_authorization",
+        "remote_ci_status"
+      ],
+      "enabled_by_this_package": false
     },
     "LIVE_OPENVIKING": {
       "default": "HOLD",
-      "enabled_by_this_package": false,
       "required": [
-        "native_v0.5.0",
-        "acl_test",
+        "v0.5.0_runtime_attested",
+        "synthetic_fixture_verified",
+        "two_user_isolation",
         "index_consistency",
         "recovery_test"
-      ]
+      ],
+      "enabled_by_this_package": false
     }
   },
+  "status_vocabulary": [
+    "PASS",
+    "FAIL",
+    "HOLD",
+    "UNKNOWN",
+    "UNRESOLVED"
+  ],
   "evidence_axes": [
     "E0_ASSERTION",
     "E1_REFERENCED",
@@ -43,5 +55,6 @@
     "E4_CONTENT_ADDRESSED",
     "E5_EXTERNALLY_ATTESTED"
   ],
-  "evidence_levels_are_independent_axes": true
+  "evidence_levels_are_independent_axes": true,
+  "publication_is_separate_authority": true
 }

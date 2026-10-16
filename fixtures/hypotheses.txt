@@ -1,0 +1,2 @@
+Research fixture. Hypothesis H1: lambda=0. Competing H2: lambda!=0.
+Both hypotheses are unresolved. This is not a proof, theorem or engineering claim.

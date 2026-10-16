@@ -1,0 +1,135 @@
+## unittest
+ ok
+test_02_digest_mismatch (test_fcf.CoreTests.test_02_digest_mismatch) ... ok
+test_03_record_metadata_tampering (test_fcf.CoreTests.test_03_record_metadata_tampering) ... ok
+test_04_forged_canonical_source (test_fcf.CoreTests.test_04_forged_canonical_source) ... ok
+test_05_invalid_project_id (test_fcf.CoreTests.test_05_invalid_project_id) ... ok
+test_06_missing_revision (test_fcf.CoreTests.test_06_missing_revision) ... ok
+test_07_no_empty_source (test_fcf.CoreTests.test_07_no_empty_source) ... ok
+test_08_large_source_rejected (test_fcf.CoreTests.test_08_large_source_rejected) ... ok
+test_09_immutable_capture_and_roundtrip (test_fcf.CoreTests.test_09_immutable_capture_and_roundtrip) ... ok
+test_10_store_tamper_detected (test_fcf.CoreTests.test_10_store_tamper_detected) ... ok
+test_11_injected_crash_leaves_no_new_artifact (test_fcf.CoreTests.test_11_injected_crash_leaves_no_new_artifact) ... ok
+test_12_cross_project_proposal_rejected (test_fcf.CoreTests.test_12_cross_project_proposal_rejected) ... ok
+test_13_zero_source_proposal_rejected (test_fcf.CoreTests.test_13_zero_source_proposal_rejected) ... ok
+test_14_declared_conflict_hold (test_fcf.CoreTests.test_14_declared_conflict_hold) ... ok
+test_15_untrusted_role_hold (test_fcf.CoreTests.test_15_untrusted_role_hold) ... ok
+test_16_valid_proposal_still_not_authorization (test_fcf.CoreTests.test_16_valid_proposal_still_not_authorization) ... ok
+test_17_missing_evidence_hold (test_fcf.CoreTests.test_17_missing_evidence_hold) ... ok
+test_18_proposal_tampering_hold (test_fcf.CoreTests.test_18_proposal_tampering_hold) ... ok
+test_19_prompt_injection_not_executed_or_promoted (test_fcf.CoreTests.test_19_prompt_injection_not_executed_or_promoted) ... ok
+test_20_digest_stability (test_fcf.CoreTests.test_20_digest_stability) ... ok
+test_all_capabilities_explicit (test_kbi.KBICapsuleTests.test_all_capabilities_explicit) ... ok
+test_capsule_passes_offline (test_kbi.KBICapsuleTests.test_capsule_passes_offline) ... ok
+test_no_broad_capability_allowlist (test_kbi.KBICapsuleTests.test_no_broad_capability_allowlist) ... ok
+test_no_canon_source_demotion (test_kbi.KBICapsuleTests.test_no_canon_source_demotion) ... ok
+test_no_canonical_effect (test_kbi.KBICapsuleTests.test_no_canonical_effect) ... ok
+test_no_capability_escalation (test_kbi.KBICapsuleTests.test_no_capability_escalation) ... ok
+test_no_claim_missing_source (test_kbi.KBICapsuleTests.test_no_claim_missing_source) ... ok
+test_no_cycle (test_kbi.KBICapsuleTests.test_no_cycle) ... ok
+test_no_doc_edit_gate_open (test_kbi.KBICapsuleTests.test_no_doc_edit_gate_open) ... ok
+test_no_dup_kernel (test_kbi.KBICapsuleTests.test_no_dup_kernel) ... ok
+test_no_duplicate_edge (test_kbi.KBICapsuleTests.test_no_duplicate_edge) ... ok
+test_no_evidence_scalar_inflation (test_kbi.KBICapsuleTests.test_no_evidence_scalar_inflation) ... ok
+test_no_missing_boot (test_kbi.KBICapsuleTests.test_no_missing_boot) ... ok
+test_no_missing_dual_lineage (test_kbi.KBICapsuleTests.test_no_missing_dual_lineage) ... ok
+test_no_native_evidence_forgery (test_kbi.KBICapsuleTests.test_no_native_evidence_forgery) ... ok
+test_no_orphan_lattice_node (test_kbi.KBICapsuleTests.test_no_orphan_lattice_node) ... ok
+test_no_project_wildcard (test_kbi.KBICapsuleTests.test_no_project_wildcard) ... ok
+test_no_public_gate_open (test_kbi.KBICapsuleTests.test_no_public_gate_open) ... ok
+test_no_publish_evidence_forgery (test_kbi.KBICapsuleTests.test_no_publish_evidence_forgery) ... ok
+test_no_schema_drift (test_kbi.KBICapsuleTests.test_no_schema_drift) ... ok
+test_no_source_root_mismatch (test_kbi.KBICapsuleTests.test_no_source_root_mismatch) ... ok
+test_no_unknown_dependency (test_kbi.KBICapsuleTests.test_no_unknown_dependency) ... ok
+test_no_unknown_invariant (test_kbi.KBICapsuleTests.test_no_unknown_invariant) ... ok
+test_no_unverified_source (test_kbi.KBICapsuleTests.test_no_unverified_source) ... ok
+test_no_write_effect_by_reader (test_kbi.KBICapsuleTests.test_no_write_effect_by_reader) ... ok
+test_distinct_project_can_bootstrap_and_validate (test_kbi_scaffold.ProjectScaffoldTests.test_distinct_project_can_bootstrap_and_validate) ... ok
+test_generated_capsule_has_independent_source_identity (test_kbi_scaffold.ProjectScaffoldTests.test_generated_capsule_has_independent_source_identity) ... ok
+test_http_source_is_rejected (test_kbi_scaffold.ProjectScaffoldTests.test_http_source_is_rejected) ... ok
+test_no_repository_root_as_drive (test_kbi_scaffold.ProjectScaffoldTests.test_no_repository_root_as_drive) ... ok
+test_project_id_not_reused (test_kbi_scaffold.ProjectScaffoldTests.test_project_id_not_reused) ... ok
+test_refuse_overwrite (test_kbi_scaffold.ProjectScaffoldTests.test_refuse_overwrite) ... ok
+test_acl_inherit_hold (test_p02_conformance.P02Tests.test_acl_inherit_hold) ... ok
+test_actual_secondary_identity_denied (test_p02_conformance.P02Tests.test_actual_secondary_identity_denied) ... ok
+test_anonymous_dev_mode_hold (test_p02_conformance.P02Tests.test_anonymous_dev_mode_hold) ... ok
+test_binding_detects_forged_manifest (test_p02_conformance.P02Tests.test_binding_detects_forged_manifest) ... ok
+test_cross_project_manifest_binding_rejected (test_p02_conformance.P02Tests.test_cross_project_manifest_binding_rejected) ... ok
+test_cross_scope_blocked_even_if_remote_returns_it (test_p02_conformance.P02Tests.test_cross_scope_blocked_even_if_remote_returns_it) ... ok
+test_find_scoped (test_p02_conformance.P02Tests.test_find_scoped) ... ok
+test_http_is_real_and_read_only (test_p02_conformance.P02Tests.test_http_is_real_and_read_only) ... ok
+test_http_secret_not_returned_in_report (test_p02_conformance.P02Tests.test_http_secret_not_returned_in_report) ... ok
+test_local_snapshot_binding_not_authentication (test_p02_conformance.P02Tests.test_local_snapshot_binding_not_authentication) ... ok
+test_no_api_key_even_for_loopback (test_p02_conformance.P02Tests.test_no_api_key_even_for_loopback) ... ok
+test_preflight (test_p02_conformance.P02Tests.test_preflight) ... ok
+test_retrieval_poison_does_not_grant_authority (test_p02_conformance.P02Tests.test_retrieval_poison_does_not_grant_authority) ... ok
+test_same_secret_secondary_user_rejected (test_p02_conformance.P02Tests.test_same_secret_secondary_user_rejected) ... ok
+test_unbound_source_remains_unbound (test_p02_conformance.P02Tests.test_unbound_source_remains_unbound) ... ok
+test_unknown_endpoint_not_available (test_p02_conformance.P02Tests.test_unknown_endpoint_not_available) ... ok
+test_version_mismatch_hold (test_p02_conformance.P02Tests.test_version_mismatch_hold) ... ok
+test_wildcard_acl_hold (test_p02_conformance.P02Tests.test_wildcard_acl_hold) ... ok
+test_wrong_foreign_identity_rejected (test_p02_conformance.P02Tests.test_wrong_foreign_identity_rejected) ... ok
+test_bad_acl_holds_before_download (test_p03_live_contract.P03HTTPTests.test_bad_acl_holds_before_download) ... ok
+test_bad_digest_format_rejected (test_p03_live_contract.P03HTTPTests.test_bad_digest_format_rejected) ... ok
+test_download_digest_mismatch_fails_closed (test_p03_live_contract.P03HTTPTests.test_download_digest_mismatch_fails_closed) ... ok
+test_end_to_end_simulated_contract_pass (test_p03_live_contract.P03HTTPTests.test_end_to_end_simulated_contract_pass) ... ok
+test_exact_sha256_operator_supplied (test_p03_live_contract.P03HTTPTests.test_exact_sha256_operator_supplied) ... ok
+test_false_api_claim_holds_preflight (test_p03_live_contract.P03HTTPTests.test_false_api_claim_holds_preflight) ... ok
+test_foreign_key_must_be_distinct (test_p03_live_contract.P03HTTPTests.test_foreign_key_must_be_distinct) ... ok
+test_full_probe_does_not_export_api_key (test_p03_live_contract.P03HTTPTests.test_full_probe_does_not_export_api_key) ... ok
+test_honest_statement_source_authenticity (test_p03_live_contract.P03HTTPTests.test_honest_statement_source_authenticity) ... ok
+test_malformed_index_envelope_holds (test_p03_live_contract.P03HTTPTests.test_malformed_index_envelope_holds) ... ok
+test_missing_index_holds (test_p03_live_contract.P03HTTPTests.test_missing_index_holds) ... ok
+test_negative_binary_download_denied (test_p03_live_contract.P03HTTPTests.test_negative_binary_download_denied) ... ok
+test_no_mutating_endpoint_called (test_p03_live_contract.P03HTTPTests.test_no_mutating_endpoint_called) ... ok
+test_outside_project_file_rejected (test_p03_live_contract.P03HTTPTests.test_outside_project_file_rejected) ... ok
+test_prefix_confusion_rejected (test_p03_live_contract.P03HTTPTests.test_prefix_confusion_rejected) ... ok
+test_server_file_mutation_detected (test_p03_live_contract.P03HTTPTests.test_server_file_mutation_detected) ... ok
+test_server_status_must_be_true_boolean (test_p03_live_contract.P03HTTPTests.test_server_status_must_be_true_boolean) ... ok
+test_traversal_and_encoded_delimiters_rejected (test_p03_live_contract.P03HTTPTests.test_traversal_and_encoded_delimiters_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 99 tests in 2.459s
+
+OK
+
+
+## kbi_structural
+{
+  "verdict": "PASS_STRUCTURAL_ONLY",
+  "schema": "fcf.kbi.validation.v1",
+  "project_id": "fcf-research",
+  "kernels": 9,
+  "edges": 8,
+  "sources": 14,
+  "claims": 3,
+  "canonical_writes": 0,
+  "publication_authorized": false,
+  "real_runtime_verified": false
+}
+
+
+## schema_specimens
+PASS source-record.schema.json
+PASS memory-proposal.schema.json
+PASS assessment.schema.json
+
+
+## scientific_conflicts
+PASS: competing hypotheses preserved under HOLD
+
+
+## capture
+{"content_sha256":"c9927206982b8efacb6b683a04db8ef8345c54deb14a4b0fffbc8fa9758eb114","record_sha256":"dccd7d92cb93f0f93b1885d7805b4820e071428356d177e683c675d6d333d0be","status":"OBSERVED"}
+
+
+## verify
+{"content_bytes":151,"record_sha256":"dccd7d92cb93f0f93b1885d7805b4820e071428356d177e683c675d6d333d0be","semantic_truth":"NOT_PROVEN","verified":true}
+
+
+## propose
+{"authority":"NONE","claim":"Provisional hypothesis, not a theorem","conflict_keys":[],"project_id":"dft-research","proposal_sha256":"56c9d84fd2584127d1d5074426b2b8e201ab4d7970db3e691c9dc96e2417c48b","schema_version":"fcf.proposal.v1","semantic_truth":"NOT_PROVEN","source_record_sha256":["dccd7d92cb93f0f93b1885d7805b4820e071428356d177e683c675d6d333d0be"],"state":"PROPOSED"}
+
+
+## assess
+{"assessment_sha256":"d1385fa02925b904895b955753dc44e7337e90bfdbcd2085a2f3c1c64b95ca49","canonical_write_performed":false,"outcome":"ELIGIBLE_FOR_HUMAN_REVIEW","principal_id":"demo-reviewer","principal_role":"reviewer","proposal_sha256":"56c9d84fd2584127d1d5074426b2b8e201ab4d7970db3e691c9dc96e2417c48b","reasons":[],"schema_version":"fcf.assessment.v1","semantic_truth":"NOT_PROVEN"}

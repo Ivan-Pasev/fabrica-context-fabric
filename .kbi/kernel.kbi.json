@@ -1,0 +1,188 @@
+{
+  "schema": "fcf.kbi.kernel.v1",
+  "id": "FCF.KBI.ROOT",
+  "project_id": "fcf-research",
+  "version": "0.4.0",
+  "canonical_root": "https://drive.google.com/drive/folders/PROJECT_FOLDER_ID_REDACTED",
+  "type": "PROJECT_BOUND_CAPSULE",
+  "default_mode": "AUDIT_ONLY",
+  "namespaces": {
+    "KBI_KERNEL": "Bounded planning, invariant-guarded execution and transition assessment",
+    "KBI_EPISTEMIC": "Claim/evidence/contradiction and promotion-debt assessment"
+  },
+  "hard_invariants": [
+    "KBI-LIVE-CANON",
+    "KBI-SOURCE",
+    "KBI-EVIDENCE",
+    "KBI-BOUNDARY",
+    "KBI-DRIFT",
+    "KBI-PROVENANCE",
+    "KBI-CONFLICT",
+    "KBI-VERIFY",
+    "KBI-HUMAN",
+    "KBI-RELEASE",
+    "KBI-ROUTE"
+  ],
+  "kernels": [
+    {
+      "id": "sense",
+      "namespace": "KBI_KERNEL",
+      "class": "SOURCE",
+      "operation": "READ",
+      "required_capability": "read.drive",
+      "output_type": "report.observations",
+      "depends_on": [],
+      "invariants": [
+        "KBI-SOURCE",
+        "KBI-LIVE-CANON"
+      ],
+      "effect": "NONE",
+      "default_decision": "HOLD"
+    },
+    {
+      "id": "classify",
+      "namespace": "KBI_EPISTEMIC",
+      "class": "EPISTEMIC",
+      "operation": "ANALYZE",
+      "required_capability": "analyze.local",
+      "output_type": "report.claims",
+      "depends_on": [
+        "sense"
+      ],
+      "invariants": [
+        "KBI-EVIDENCE"
+      ],
+      "effect": "NONE",
+      "default_decision": "HOLD"
+    },
+    {
+      "id": "route",
+      "namespace": "KBI_KERNEL",
+      "class": "KERNEL",
+      "operation": "PLAN",
+      "required_capability": "analyze.local",
+      "output_type": "plan.routing",
+      "depends_on": [
+        "classify"
+      ],
+      "invariants": [
+        "KBI-ROUTE"
+      ],
+      "effect": "NONE",
+      "default_decision": "HOLD"
+    },
+    {
+      "id": "synthesize",
+      "namespace": "KBI_KERNEL",
+      "class": "KERNEL",
+      "operation": "PROPOSE",
+      "required_capability": "write.staging",
+      "output_type": "artifact.candidate",
+      "depends_on": [
+        "route"
+      ],
+      "invariants": [
+        "KBI-BOUNDARY",
+        "KBI-PROVENANCE"
+      ],
+      "effect": "STAGING_ONLY",
+      "default_decision": "HOLD"
+    },
+    {
+      "id": "redteam",
+      "namespace": "KBI_EPISTEMIC",
+      "class": "EPISTEMIC",
+      "operation": "REVIEW",
+      "required_capability": "analyze.local",
+      "output_type": "report.adversarial",
+      "depends_on": [
+        "synthesize"
+      ],
+      "invariants": [
+        "KBI-EVIDENCE",
+        "KBI-CONFLICT"
+      ],
+      "effect": "NONE",
+      "default_decision": "HOLD"
+    },
+    {
+      "id": "verify",
+      "namespace": "KBI_EPISTEMIC",
+      "class": "EPISTEMIC",
+      "operation": "VALIDATE",
+      "required_capability": "verify.local",
+      "output_type": "report.validation",
+      "depends_on": [
+        "redteam"
+      ],
+      "invariants": [
+        "KBI-VERIFY"
+      ],
+      "effect": "NONE",
+      "default_decision": "HOLD"
+    },
+    {
+      "id": "review",
+      "namespace": "KBI_KERNEL",
+      "class": "GOVERNANCE",
+      "operation": "APPROVAL_REQUEST",
+      "required_capability": "none",
+      "output_type": "decision.request",
+      "depends_on": [
+        "verify"
+      ],
+      "invariants": [
+        "KBI-HUMAN"
+      ],
+      "effect": "NONE",
+      "default_decision": "HOLD"
+    },
+    {
+      "id": "update_handoff",
+      "namespace": "KBI_KERNEL",
+      "class": "GOVERNANCE",
+      "operation": "WRITE_PROPOSAL",
+      "required_capability": "write.staging",
+      "output_type": "handoff.proposal",
+      "depends_on": [
+        "review"
+      ],
+      "invariants": [
+        "KBI-DRIFT"
+      ],
+      "effect": "STAGING_ONLY",
+      "default_decision": "HOLD"
+    },
+    {
+      "id": "publish_candidate",
+      "namespace": "KBI_KERNEL",
+      "class": "RELEASE",
+      "operation": "RELEASE_PROPOSAL",
+      "required_capability": "write.staging",
+      "output_type": "release.candidate",
+      "depends_on": [
+        "update_handoff"
+      ],
+      "invariants": [
+        "KBI-RELEASE"
+      ],
+      "effect": "STAGING_ONLY",
+      "default_decision": "HOLD"
+    }
+  ],
+  "capability_allowlist": [
+    "read.drive",
+    "analyze.local",
+    "verify.local",
+    "write.staging",
+    "none"
+  ],
+  "operational_capability_available": "DISCOVER_AT_RUNTIME",
+  "no_effect_claims": [
+    "agent_role_is_logical",
+    "tool_access_is_not_implied",
+    "staging_is_not_canonical",
+    "synthetic_http_test_is_not_openviking_runtime"
+  ],
+  "fail_closed": true
+}
