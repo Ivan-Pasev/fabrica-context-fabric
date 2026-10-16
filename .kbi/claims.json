@@ -1,0 +1,26 @@
+{
+  "schema": "fcf.kbi.claims.v1",
+  "project_id": "fcf-research",
+  "claims": [
+    {
+      "id": "FCF-P06-BOOTSTRAP",
+      "status": "PENDING_REMOTE_CI",
+      "scope": "this bootstrap only"
+    },
+    {
+      "id": "FCF-P04-FULL-SOURCE",
+      "status": "HOLD",
+      "scope": "87-file public archive + 99 tests"
+    },
+    {
+      "id": "FCF-OV-NATIVE",
+      "status": "HOLD",
+      "scope": "actual server"
+    },
+    {
+      "id": "FCF-PRODUCTION",
+      "status": "HOLD",
+      "scope": "security certification"
+    }
+  ]
+}
