@@ -49,6 +49,20 @@ P10_REVIEWED_BLOBS = {
   "docs/P10_PINNED_UPSTREAM_INSTALL_AND_LIMITS.md": "9c83773458876f602846c292807282e8e4cc7d29"
 }
 
+P11_REVIEWED_BLOBS = {
+  "scripts/p11_native_http_smoke.py": "4777ecf8e0fa89d63d5faeb0f9bbdd588cd5c4ae",
+  "tests/test_p11_native_http_smoke.py": "a202c9691e1e581d481375d9ecdbc38741dc8b1f",
+  ".github/workflows/p11-native-loopback-http.yml": "65c8cb62ef6f9d54d83bdfa5b47702c25de6b379",
+  "docs/P11_NATIVE_BOOT_PROTOCOL.md": "6629b769766a86bb202fae65a3fecea345809f05"
+}
+
+P11_CORE_REVIEWED_BLOBS = {
+  "scripts/p11_core_init_probe.py": "1fc8afa617844504ceddd7918f02e4011cbde232",
+  "tests/test_p11_core_init_probe.py": "4858655fe15d22ea22b70235ec85997c838ebd4e",
+  ".github/workflows/p11-core-init-diagnostic.yml": "c9a0beb391652d45f8791294f098f1e6293e61af",
+  "docs/P11_DIRECT_CORE_INIT_DIAGNOSTIC.md": "7a52d50eed0c797f1adcab436ba52d3d635f44cf"
+}
+
 def git_blob_sha(data: bytes) -> str:
     return hashlib.sha1(b'blob ' + str(len(data)).encode('ascii') + bytes([0]) + data).hexdigest()
 
@@ -124,6 +138,14 @@ def audit_repo(root: pathlib.Path) -> dict:
         if rel in P10_REVIEWED_BLOBS:
             if git_blob_sha(data) != P10_REVIEWED_BLOBS[rel]:
                 raise ImportAuditError('P10 addon blob differs from reviewed pin: ' + rel)
+            continue
+        if rel in P11_REVIEWED_BLOBS:
+            if git_blob_sha(data) != P11_REVIEWED_BLOBS[rel]:
+                raise ImportAuditError('P11 addon blob differs from reviewed pin: ' + rel)
+            continue
+        if rel in P11_CORE_REVIEWED_BLOBS:
+            if git_blob_sha(data) != P11_CORE_REVIEWED_BLOBS[rel]:
+                raise ImportAuditError('P11 core probe differs from reviewed pin: ' + rel)
             continue
         files[rel] = data
     result = _verify(files)

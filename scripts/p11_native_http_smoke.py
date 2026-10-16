@@ -1,0 +1,273 @@
+"""P11: bounded real OpenViking server HTTP bootstrap; NO tenant/model certification.
+
+Only use in an isolated disposable CI runner. The configured model endpoints are
+intentionally inert loopback placeholders; no embedding/VLM call is exercised.
+"""
+from __future__ import annotations
+import argparse
+import json
+import os
+from pathlib import Path
+import secrets
+import socket
+import subprocess
+import tempfile
+import time
+import urllib.error
+import urllib.request
+
+EXPECTED = "20f9c11362ad16193b0daa4a414e1095061af427"
+
+def classify_startup_failure(log_content: str) -> str:
+    """Only disclose a predefined failure class. Never export raw server logs."""
+    text = log_content[-65536:].lower()
+    groups = (
+        ("CONFIG_VALIDATION", ("validationerror", "configuration error", "invalid server config", "failed to load openviking server configuration", "extra inputs are not permitted")),
+        ("AUTH_CONFIGURATION", ("authentication health check", "root_api_key", "api key manager")),
+        ("STORAGE_INITIALIZATION", ("initialize storage", "agfs error", "storage init", "vectordb", "persiststore")),
+        ("MODEL_CONFIGURATION", ("embedding provider requires", "vlm provider requires", "failed to initialize embedding", "model provider unavailable", "embedding api connection failure")),
+        ("LISTENER_BIND_FAILURE", ("address already in use", "error while attempting to bind", "port is already in use")),
+        ("PYTHON_IMPORT_FAILURE", ("modulenotfounderror", "importerror", "cannot import name")),
+    )
+    for name, patterns in groups:
+        if any(term in text for term in patterns):
+            return name
+    return "UNCLASSIFIED_PROCESS_EXIT"
+
+
+
+def schema_preflight(path: Path) -> dict:
+    """Execute real v0.5.0 Pydantic/config validators; never expose errors."""
+    try:
+        from openviking.server.config import load_server_config, validate_server_config
+        from openviking_cli.utils.config.open_viking_config import OpenVikingConfig
+        server_config = load_server_config(str(path))
+        document = json.loads(path.read_text(encoding="utf-8"))
+        model_config = OpenVikingConfig.from_dict(document)
+        validate_server_config(server_config)
+        validated = (
+            server_config.get_effective_auth_mode() == "api_key"
+            and server_config.host == "127.0.0.1"
+            and model_config.storage.workspace == document["storage"]["workspace"]
+            and model_config.embedding.dense is not None
+        )
+        return {"status": "PASS" if validated else "HOLD",
+                "reason_code": "UPSTREAM_CONFIG_ACCEPTED" if validated else "CONFIG_INVARIANT_MISMATCH",
+                "exception_kind": "NONE"}
+    except BaseException as exc:
+        # Only fixed names; do not return config values, freeform errors, raw logs, or paths.
+        kind = type(exc).__name__
+        if kind not in {"ValidationError", "ValueError", "TypeError", "KeyError",
+                        "ImportError", "ModuleNotFoundError", "SystemExit",
+                        "RuntimeError", "AttributeError", "OSError"}:
+            kind = "OTHER"
+        return {"status": "HOLD", "reason_code": "UPSTREAM_CONFIG_PREFLIGHT_FAILED",
+                "exception_kind": kind}
+
+
+def traceback_stage_hint(log_content: str) -> dict:
+    """Only enumerated traceback metadata, never raw exception details or paths."""
+    stages = []
+    for line in log_content[-65536:].splitlines():
+        if 'File "' not in line or '", line ' not in line:
+            continue
+        value = line.lower().replace("\\", "/")
+        if "openviking/storage/" in value:
+            stages.append("C2_STORAGE")
+        elif "openviking/service/core.py" in value:
+            stages.append("C2_CORE")
+        elif "openviking/server/auth/" in value:
+            stages.append("C3_AUTH")
+        elif "openviking/server/app.py" in value:
+            stages.append("C2_C3_APP_LIFESPAN")
+        elif "openviking/server/bootstrap.py" in value:
+            stages.append("C1_C2_BOOTSTRAP")
+        elif "openviking_cli/utils/config/" in value:
+            stages.append("C1_CONFIG_RELOAD")
+        elif "/uvicorn/" in value:
+            stages.append("C4_HTTP_RUNNER")
+    allowed = {"ValidationError", "ValueError", "RuntimeError", "TypeError",
+               "KeyError", "AttributeError", "ModuleNotFoundError", "ImportError",
+               "OSError", "FileNotFoundError", "PermissionError", "ConnectionError",
+               "TimeoutError", "AssertionError", "NotImplementedError", "SystemExit"}
+    exception = "NOT_OBSERVED"
+    for line in log_content[-65536:].splitlines():
+        candidate = line.strip().split(":", 1)[0]
+        if candidate in allowed:
+            exception = candidate
+    return {"stage_hint": stages[-1] if stages else "UNKNOWN",
+            "exception_kind": exception,
+            "traceback_frame_observed": bool(stages),
+            "causal_root_established": False}
+
+
+def port_in_use(port: int) -> bool:
+    """Refuse stale/foreign localhost services; never attribute them to this child."""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(0.5)
+        return sock.connect_ex(("127.0.0.1", port)) == 0
+
+
+def config(workspace: str, port: int, key: str) -> dict:
+    if not key or len(key) < 40:
+        raise ValueError("strong ephemeral root key required")
+    return {
+        "server": {"host": "127.0.0.1", "port": port, "auth_mode": "api_key",
+                   "root_api_key": key,
+                   "observability": {"metrics": {"enabled": False},
+                                     "usage_audit": {"enabled": False}}},
+        "storage": {"workspace": workspace,
+                    "vectordb": {"name": "p11-synthetic", "backend": "local"},
+                    "agfs": {"backend": "local"}},
+        "embedding": {"dense": {"provider": "openai",
+                                "model": "synthetic-embedding-not-operational",
+                                "api_base": "http://127.0.0.1:19777/v1",
+                                "api_key": "inert-synthetic-model-token",
+                                "dimension": 8, "input": "text"}},
+        "vlm": {"provider": "openai", "model": "synthetic-vlm-not-operational",
+                "api_base": "http://127.0.0.1:19777/v1",
+                "api_key": "inert-synthetic-model-token"},
+    }
+
+
+def observe_url(url: str, key: str | None = None, timeout: float = 2.0) -> tuple[int | None, dict]:
+    headers = {"Accept": "application/json"}
+    if key is not None:
+        headers["X-API-Key"] = key
+    try:
+        opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+        with opener.open(urllib.request.Request(url, headers=headers), timeout=timeout) as resp:
+            status = resp.status
+            raw = resp.read(16385)
+    except urllib.error.HTTPError as ex:
+        status = ex.code
+        raw = ex.read(16385)
+    except (OSError, ValueError):
+        return None, {}
+    if len(raw) > 16384:
+        return status, {}
+    try:
+        value = json.loads(raw.decode("utf-8"))
+        return status, value if isinstance(value, dict) else {}
+    except (ValueError, UnicodeError):
+        return status, {}
+
+
+def assess(health: tuple[int | None, dict], ready: tuple[int | None, dict],
+           anonymous: tuple[int | None, dict], invalid_key: tuple[int | None, dict]) -> dict:
+    hs, hv = health
+    rs, rv = ready
+    s0, _ = anonymous
+    si, _ = invalid_key
+    health_pass = hs == 200 and hv.get("status") == "ok" and hv.get("healthy") is True
+    ready_pass = rs == 200 and rv.get("status") == "ready"
+    denied = s0 in (401, 403) and si in (401, 403)
+    outcome = "OBSERVED_PASS" if health_pass and ready_pass and denied else "HOLD"
+    return {"phase": "P11", "status": outcome, "reason_code": "LOCAL_REAL_SERVER_HTTP_READY" if outcome == "OBSERVED_PASS" else "READINESS_OR_AUTH_DENIAL_INCOMPLETE",
+            "http_health": "PASS" if health_pass else "HOLD",
+            "http_ready": "PASS" if ready_pass else "HOLD",
+            "anonymous_admin_api_denied": "PASS" if denied else "HOLD",
+            "observed_http_statuses": {"health": hs, "ready": rs, "anonymous": s0, "invalid_key": si},
+            "upstream_source_target": EXPECTED,
+            "model_provider": "INERT_LOOPBACK_NOT_VERIFIED",
+            "account_acl_enforcement": "NOT_TESTED", "two_user_acl": "NOT_TESTED",
+            "cross_account_acl": "NOT_TESTED", "source_integrity": "NOT_TESTED",
+            "binary_process_attestation": "NOT_ESTABLISHED",
+            "recovery": "NOT_TESTED", "production_authorized": False}
+
+
+def run(*, execute: bool, upstream_path: Path, timeout_s: float = 90.0, port: int = 19389) -> tuple[dict, int]:
+    if not execute:
+        return {"phase": "P11", "status": "HOLD", "reason_code": "NOT_EXECUTED", "production_authorized": False}, 2
+    if timeout_s < 5 or timeout_s > 180:
+        raise ValueError("timeout out of range")
+    if not upstream_path.is_dir() or not (upstream_path / ".git").exists():
+        return {"phase": "P11", "status": "HOLD", "reason_code": "SOURCE_MISSING", "production_authorized": False}, 2
+    try:
+        sha = subprocess.run(["git", "-C", str(upstream_path), "rev-parse", "HEAD"],
+                             capture_output=True, text=True, check=True, timeout=10).stdout.strip()
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        sha = None
+    if sha != EXPECTED:
+        return {"phase": "P11", "status": "HOLD", "reason_code": "SOURCE_SHA_MISMATCH", "production_authorized": False}, 2
+    if port < 1024 or port > 65535 or port_in_use(port):
+        return {"phase": "P11", "status": "HOLD", "reason_code": "PORT_UNSAFE_OR_OCCUPIED", "production_authorized": False}, 2
+    key = secrets.token_urlsafe(48)
+    root = f"http://127.0.0.1:{port}"
+    with tempfile.TemporaryDirectory(prefix="fcf-p11-synthetic-") as tmp:
+        conf = Path(tmp, "ov.conf")
+        conf.write_text(json.dumps(config(str(Path(tmp, "workspace")), port, key)), encoding="utf-8")
+        os.chmod(conf, 0o600)
+        preflight = schema_preflight(conf)
+        if preflight["status"] != "PASS":
+            return {"phase": "P11", "status": "HOLD",
+                    "reason_code": "UPSTREAM_CONFIG_PREFLIGHT_FAILED",
+                    "config_preflight": preflight, "server_started": False,
+                    "production_authorized": False}, 2
+        with open(Path(tmp, "server.log"), "wb") as logfile:
+            try:
+                proc = subprocess.Popen(["openviking-server", "--config", str(conf),
+                                         "--host", "127.0.0.1", "--port", str(port)],
+                                        stdout=logfile, stderr=subprocess.STDOUT,
+                                        env={**os.environ, "NO_COLOR": "1"})
+            except OSError:
+                return {"phase": "P11", "status": "HOLD", "reason_code": "SERVER_EXECUTABLE_NOT_AVAILABLE", "production_authorized": False}, 2
+            try:
+                start = time.monotonic()
+                health = (None, {})
+                while time.monotonic() - start < timeout_s:
+                    if proc.poll() is not None:
+                        break
+                    health = observe_url(root + "/health", timeout=1.5)
+                    if health[0] == 200:
+                        break
+                    time.sleep(1.0)
+                ready = observe_url(root + "/ready")
+                anon = observe_url(root + "/api/v1/system/status")
+                bogus = observe_url(root + "/api/v1/system/status", key="invalid-key-only")
+                report = assess(health, ready, anon, bogus)
+                report["child_process_spawned"] = True
+                report["child_alive_at_probe"] = proc.poll() is None
+                report["server_started"] = bool(report["child_alive_at_probe"] and health[0] == 200)
+                report["process_identity"] = "SUBPROCESS_LAUNCHED_FROM_PINNED_CHECKOUT_ENVIRONMENT_NOT_INDEPENDENTLY_ATTESTED"
+                report["config_preflight"] = preflight
+                report["port"] = port
+                if not report["child_alive_at_probe"] or not report["server_started"]:
+                    report["status"] = "HOLD"
+                    report["reason_code"] = "CHILD_EXITED_OR_HTTP_NOT_READY"
+                    exit_code = proc.poll()
+                    report["child_exit_code"] = exit_code if type(exit_code) is int and -128 <= exit_code <= 255 else None
+                    logfile.flush()
+                    try:
+                        safe_log = Path(tmp, "server.log").read_bytes()[-65536:].decode("utf-8", "replace")
+                        report["startup_failure_class"] = classify_startup_failure(safe_log)
+                        report["traceback_hint"] = traceback_stage_hint(safe_log)
+                    except OSError:
+                        report["startup_failure_class"] = "LOG_UNAVAILABLE"
+                        report["traceback_hint"] = traceback_stage_hint("")
+                else:
+                    report["startup_failure_class"] = "NOT_APPLICABLE"
+                # Raw server logs may contain credentials. Only fixed classification is returned.
+                return report, 0 if report["status"] == "OBSERVED_PASS" else 2
+            finally:
+                if proc.poll() is None:
+                    proc.terminate()
+                    try:
+                        proc.wait(timeout=8)
+                    except subprocess.TimeoutExpired:
+                        proc.kill()
+                        proc.wait(timeout=5)
+
+
+def main(argv=None) -> int:
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--execute", action="store_true")
+    p.add_argument("--upstream-path", type=Path, required=True)
+    p.add_argument("--timeout", type=float, default=90)
+    x = p.parse_args(argv)
+    result, rc = run(execute=x.execute, upstream_path=x.upstream_path, timeout_s=x.timeout)
+    print(json.dumps(result, sort_keys=True))
+    return rc
+
+if __name__ == "__main__":
+    raise SystemExit(main())
