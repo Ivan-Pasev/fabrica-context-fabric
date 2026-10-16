@@ -1,0 +1,42 @@
+name: P11 actual OpenViking localhost HTTP boot (inert model configuration)
+on:
+  pull_request:
+    paths:
+      - "scripts/p11_native_http_smoke.py"
+      - "tests/test_p11_native_http_smoke.py"
+      - ".github/workflows/p11-native-loopback-http.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pinned-real-server-bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fail-closed P11 unit checks (no upstream server)
+        run: python -m unittest discover -s tests -p 'test_p11_native_http_smoke.py' -v
+      - name: Install uv
+        run: python -m pip install 'uv>=0.8,<1'
+      - name: Checkout the exact upstream source
+        env:
+          PIN: 20f9c11362ad16193b0daa4a414e1095061af427
+        run: |
+          git clone --filter=blob:none https://github.com/volcengine/OpenViking.git "$RUNNER_TEMP/openviking-p11"
+          git -C "$RUNNER_TEMP/openviking-p11" checkout --detach "$PIN"
+          test "$(git -C "$RUNNER_TEMP/openviking-p11" rev-parse HEAD)" = "$PIN"
+      - name: Install real pinned OpenViking Python distribution
+        run: uv pip install --python "$(command -v python)" -e "$RUNNER_TEMP/openviking-p11"
+      - name: Start real local OpenViking and probe HTTP (no model calls)
+        run: python scripts/p11_native_http_smoke.py --execute --upstream-path "$RUNNER_TEMP/openviking-p11" --timeout 90
+      - name: Preserve non-certified gates
+        if: always()
+        run: |
+          echo 'EMBEDDING_AND_VLM_REAL_OPERATION=HOLD (inert loopback placeholder)' >> "$GITHUB_STEP_SUMMARY"
+          echo 'EXPLICIT_ACL_ENABLED=HOLD' >> "$GITHUB_STEP_SUMMARY"
+          echo 'TWO_USER_AND_CROSS_ACCOUNT=HOLD' >> "$GITHUB_STEP_SUMMARY"
+          echo 'INDEPENDENT_PROCESS_ATTESTATION=HOLD' >> "$GITHUB_STEP_SUMMARY"
+          echo 'PRODUCTION_AUTHORIZATION=HOLD' >> "$GITHUB_STEP_SUMMARY"

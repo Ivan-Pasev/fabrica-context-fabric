@@ -49,6 +49,13 @@ P10_REVIEWED_BLOBS = {
   "docs/P10_PINNED_UPSTREAM_INSTALL_AND_LIMITS.md": "9c83773458876f602846c292807282e8e4cc7d29"
 }
 
+P11_REVIEWED_BLOBS = {
+  "scripts/p11_native_http_smoke.py": "2b4d1a4b79e409f3b91eeeb989ebaa849c0e8412",
+  "tests/test_p11_native_http_smoke.py": "13715da4ffc9a12bad8766ca15cda80732544704",
+  ".github/workflows/p11-native-loopback-http.yml": "65c8cb62ef6f9d54d83bdfa5b47702c25de6b379",
+  "docs/P11_NATIVE_BOOT_PROTOCOL.md": "aa2f96f2238a7157d94ee5776a7ec1a531594342"
+}
+
 def git_blob_sha(data: bytes) -> str:
     return hashlib.sha1(b'blob ' + str(len(data)).encode('ascii') + bytes([0]) + data).hexdigest()
 
@@ -124,6 +131,10 @@ def audit_repo(root: pathlib.Path) -> dict:
         if rel in P10_REVIEWED_BLOBS:
             if git_blob_sha(data) != P10_REVIEWED_BLOBS[rel]:
                 raise ImportAuditError('P10 addon blob differs from reviewed pin: ' + rel)
+            continue
+        if rel in P11_REVIEWED_BLOBS:
+            if git_blob_sha(data) != P11_REVIEWED_BLOBS[rel]:
+                raise ImportAuditError('P11 addon blob differs from reviewed pin: ' + rel)
             continue
         files[rel] = data
     result = _verify(files)
