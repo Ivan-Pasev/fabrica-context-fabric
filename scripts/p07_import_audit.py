@@ -57,10 +57,10 @@ P11_REVIEWED_BLOBS = {
 }
 
 P11_CORE_REVIEWED_BLOBS = {
-  "scripts/p11_core_init_probe.py": "8fde50eaa08979af90d313c80c066799e415100c",
-  "tests/test_p11_core_init_probe.py": "cdddf3afc8dc0bc488b982fb94ea79d9a7d98aa4",
+  "scripts/p11_core_init_probe.py": "1fc8afa617844504ceddd7918f02e4011cbde232",
+  "tests/test_p11_core_init_probe.py": "4858655fe15d22ea22b70235ec85997c838ebd4e",
   ".github/workflows/p11-core-init-diagnostic.yml": "c9a0beb391652d45f8791294f098f1e6293e61af",
-  "docs/P11_DIRECT_CORE_INIT_DIAGNOSTIC.md": "7578a20c7f3f6acf44f86e1dc81a03882997c84f"
+  "docs/P11_DIRECT_CORE_INIT_DIAGNOSTIC.md": "7a52d50eed0c797f1adcab436ba52d3d635f44cf"
 }
 
 def git_blob_sha(data: bytes) -> str:

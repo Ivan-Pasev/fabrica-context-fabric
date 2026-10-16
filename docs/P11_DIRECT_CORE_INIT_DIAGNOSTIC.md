@@ -21,3 +21,13 @@ A direct `initialize()` result can separate a service failure from Uvicorn/auth 
 Root workspace, account keys, source data and logs must remain synthetic and ephemeral. Upstream AGPL-3.0 remains a separate dependency; no upstream source is vendored into FCF. Stable public release, legal/security review, cross-account isolation and production remain HOLD.
 
 Next: inspect exact native CI result and exception-kind/stage hint. Repair only a source-verified configuration or storage prerequisite, then repeat original C2–C4 HTTP acceptance before progressing.
+
+## P11.5 — Native `EmbeddingConfigurationError` and dimension-alignment trial
+
+The real pinned native core run [38955703188](https://github.com/Ivan-Pasev/fabrica-context-fabric/actions/runs/38955703188) ended FAIL/HOLD with exact exception class `EmbeddingConfigurationError`, categorized stage `C2_STORAGE`, and `causal_root_established=false`. The paired HTTP run [38955703079](https://github.com/Ivan-Pasev/fabrica-context-fabric/actions/runs/38955703079) also failed, child exit code 3, `C2_STORAGE` location hint, and no HTTP status values. These independent observations indicate embedding/vector storage configuration as an area for targeted experimentation, **not a proven root cause**.
+
+Pinned upstream source verifies two direct `EmbeddingConfigurationError` raises in `openviking/storage/collection_schemas.py`: missing existing collection metadata and inability to update a local collection schema. It separately shows `VectorDBBackendConfig.dimension` defaulting to 0 whereas the controlled synthetic fixture sets `EmbeddingModelConfig.dimension=8`. Upstream may normalize or ignore that dimension; no causality should be asserted without a real comparative run.
+
+Next candidate changes only the **direct-core synthetic trial**, setting `storage.vectordb.dimension` to the explicit synthetic dense dimension 8; the genuine HTTP experiment remains an unchanged failing control. A bounded `embedding_failure_site` enum is emitted only for two exact reviewed upstream error strings, otherwise `OTHER_EMBEDDING_CONFIGURATION`. It never publishes arbitrary exception messages, keys or paths. New local tests assert dimension alignment, safety against nonlocal backends, error-code mapping and redaction.
+
+Successful aligned direct-core initialization, if observed, is limited to that specific synthetic configuration and is **not** a validated HTTP service, real embedding provider, effective ACL or production authority. A recurring exception must be preserved as a new failure observation, not interpreted as a contradiction to the prior run.

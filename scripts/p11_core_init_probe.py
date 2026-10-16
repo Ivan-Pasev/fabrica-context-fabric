@@ -26,6 +26,31 @@ def frame_stage(path: str) -> str:
     if "/openviking/server/auth/" in v: return "C3_AUTH"
     return "OTHER"
 
+def aligned_synthetic_config(document: dict) -> dict:
+    """One controlled hypothesis: align local vector dimension with dense embedding."""
+    import copy
+    fixture = copy.deepcopy(document)
+    dense = fixture["embedding"]["dense"]
+    dim = dense["dimension"]
+    if type(dim) is not int or not (1 <= dim <= 8192):
+        raise ValueError("invalid fixture dimension")
+    if fixture["storage"]["vectordb"].get("backend") != "local":
+        raise ValueError("nonlocal vector backend forbidden")
+    fixture["storage"]["vectordb"]["dimension"] = dim
+    return fixture
+
+
+def embedding_failure_site(exc: BaseException) -> str:
+    """Only exact reviewed upstream strings; no error messages in published output."""
+    if type(exc).__name__ != "EmbeddingConfigurationError":
+        return "NOT_APPLICABLE"
+    signatures = {
+        "Existing collection metadata is unavailable; cannot validate embedding compatibility": "COLLECTION_METADATA_UNAVAILABLE",
+        "Local context collection does not support automatic schema updates": "COLLECTION_SCHEMA_UPDATE_UNSUPPORTED",
+    }
+    return signatures.get(str(exc), "OTHER_EMBEDDING_CONFIGURATION")
+
+
 def bounded_exception(exc: BaseException) -> dict:
     kind = type(exc).__name__
     frames = [frame_stage(f.filename) for f in traceback.extract_tb(exc.__traceback__)]
@@ -33,6 +58,7 @@ def bounded_exception(exc: BaseException) -> dict:
     return {"status": "HOLD", "reason_code": "CORE_INITIALIZATION_EXCEPTION",
         "exception_kind": kind if kind in ALLOWED else "OTHER",
         "stage_hint": recognized[-1] if recognized else "UNKNOWN",
+        "embedding_failure_site": embedding_failure_site(exc),
         "causal_root_established": False, "service_initialized": False,
         "production_authorized": False}
 
@@ -96,15 +122,18 @@ def run(execute: bool, upstream_path: Path) -> tuple[dict, int]:
         import p11_native_http_smoke as original
         with tempfile.TemporaryDirectory(prefix="fcf-p11-core-") as tmp:
             config_file = Path(tmp, "ov.conf")
-            config_file.write_text(json.dumps(
-                original.config(str(Path(tmp, "workspace")), 19391,
-                                secrets.token_urlsafe(48))), encoding="utf-8")
+            synthetic = original.config(str(Path(tmp, "workspace")), 19391,
+                                        secrets.token_urlsafe(48))
+            config_file.write_text(json.dumps(aligned_synthetic_config(synthetic)),
+                                   encoding="utf-8")
             os.chmod(config_file, 0o600)
             os.environ["OPENVIKING_CONFIG_FILE"] = str(config_file)
             result = _isolated_native(config_file)
     except BaseException:
         result = hold("PROBE_SETUP_FAILED")
-    result = {"phase": "P11_CORE_PROBE", "upstream_source_target": PIN, **result}
+    result = {"phase": "P11_CORE_PROBE", "upstream_source_target": PIN,
+              "synthetic_dimension_alignment": "EXPERIMENTAL_VECTOR_EQUALS_DENSE",
+              **result}
     return result, 0 if result["status"] == "OBSERVED_PASS" else 2
 
 def main(argv=None) -> int:

@@ -43,5 +43,33 @@ class CoreProbeContract(unittest.TestCase):
         with self.assertRaises(ValueError):
             core.hold("PASS")
 
+
+    def test_dimension_alignment_preserves_fixture_and_source(self):
+        original = {"storage": {"vectordb": {"name": "test", "backend": "local"}},
+                    "embedding": {"dense": {"dimension": 8}}}
+        aligned = core.aligned_synthetic_config(original)
+        self.assertEqual(aligned["storage"]["vectordb"]["dimension"], 8)
+        self.assertNotIn("dimension", original["storage"]["vectordb"])
+    def test_dimension_alignment_rejects_broken_fixture(self):
+        with self.assertRaises(ValueError):
+            core.aligned_synthetic_config({"storage": {"vectordb": {"backend": "local"}},
+                "embedding": {"dense": {"dimension": 0}}})
+    def test_dimension_alignment_rejects_remote_backend(self):
+        with self.assertRaises(ValueError):
+            core.aligned_synthetic_config({"storage": {"vectordb": {"backend": "http"}},
+                "embedding": {"dense": {"dimension": 8}}})
+    def test_exact_upstream_embedding_error_classification_no_leak(self):
+        EmbeddingConfigurationError = type("EmbeddingConfigurationError", (Exception,), {})
+        ex = EmbeddingConfigurationError("Existing collection metadata is unavailable; cannot validate embedding compatibility")
+        report = core.bounded_exception(ex)
+        self.assertEqual(report["embedding_failure_site"], "COLLECTION_METADATA_UNAVAILABLE")
+        self.assertNotIn("Existing collection metadata", repr(report))
+        self.assertFalse(report["causal_root_established"])
+    def test_unrecognized_embedding_error_remains_unknown(self):
+        EmbeddingConfigurationError = type("EmbeddingConfigurationError", (Exception,), {})
+        report = core.bounded_exception(EmbeddingConfigurationError("secret=do-not-reveal"))
+        self.assertEqual(report["embedding_failure_site"], "OTHER_EMBEDDING_CONFIGURATION")
+        self.assertNotIn("secret=do-not-reveal", repr(report))
+
 if __name__ == "__main__":
     unittest.main()
