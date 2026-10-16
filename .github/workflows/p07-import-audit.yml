@@ -1,0 +1,27 @@
+name: P07 import admission (not full-suite certification)
+on: [push, pull_request]
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m unittest discover -s tests/bootstrap -p 'test_p07_*.py' -v
+      - name: Report source parity (HOLD is not PASS)
+        shell: bash
+        run: |
+          set +e
+          python scripts/p07_import_audit.py --repo .
+          code=$?
+          if [ "$code" -eq 1 ]; then echo 'FAIL: invalid imported sources' >&2; exit 1; fi
+          if [ "$code" -eq 2 ]; then
+            echo 'P07 FULL-SOURCE PARITY: HOLD (not imported)' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'P07 FULL-SOURCE PARITY: PASS' >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit 0
