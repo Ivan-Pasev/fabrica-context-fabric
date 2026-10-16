@@ -1,0 +1,40 @@
+name: P10 pinned OpenViking install smoke (NOT server integration)
+on:
+  pull_request:
+    paths:
+      - "scripts/p10_native_install_smoke.py"
+      - "tests/test_p10_native_install_smoke.py"
+      - ".github/workflows/p10-pinned-upstream-install.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pinned-upstream:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Offline gate tests first
+        run: python -m unittest discover -s tests -p 'test_p10_native_install_smoke.py' -v
+      - name: Install Python uv
+        run: python -m pip install "uv>=0.8,<1"
+      - name: Checkout exact upstream commit
+        env:
+          PIN: 20f9c11362ad16193b0daa4a414e1095061af427
+        run: |
+          git clone --filter=blob:none https://github.com/volcengine/OpenViking.git "$RUNNER_TEMP/openviking-p10"
+          git -C "$RUNNER_TEMP/openviking-p10" checkout --detach "$PIN"
+          test "$(git -C "$RUNNER_TEMP/openviking-p10" rev-parse HEAD)" = "$PIN"
+      - name: Install pinned upstream from that checkout
+        run: uv pip install --python "$(command -v python)" -e "$RUNNER_TEMP/openviking-p10"
+      - name: Observe pinned source and installed CLI
+        run: python scripts/p10_native_install_smoke.py --execute --upstream-path "$RUNNER_TEMP/openviking-p10"
+      - name: State independent remaining gates
+        if: always()
+        run: |
+          echo 'NATIVE_SERVER_RUNNING=NOT_TESTED' >> "$GITHUB_STEP_SUMMARY"
+          echo 'TWO_ACCOUNT_ACL=HOLD' >> "$GITHUB_STEP_SUMMARY"
+          echo 'PRODUCTION_AUTHORIZATION=HOLD' >> "$GITHUB_STEP_SUMMARY"
