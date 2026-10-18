@@ -1,0 +1,51 @@
+{
+  "schema": "FGK.FCF.ExternalInterfaceCandidate/0.1",
+  "status": "DRAFT_SOURCE_ONLY",
+  "date": "2026-10-18",
+  "external_provider": {
+    "name": "FABRICA.GRAPH.KERNEL",
+    "version": "0.4.0-p3-candidate",
+    "runtime": "LOCAL_PYTHON_STDIO_ONLY",
+    "published_source_repository": null,
+    "release_eligible": false
+  },
+  "upstream_graphify": {
+    "repo": "Graphify-Labs/graphify",
+    "commit": "86c57be8204673c2a1b9849a3292a7dd3ab373d8",
+    "package": "graphifyy",
+    "version": "0.9.92",
+    "engine_execution": "NOT_RUN"
+  },
+  "read_only_tools": [
+    "graph.summary",
+    "graph.neighbors",
+    "graph.path",
+    "graph.evidence"
+  ],
+  "ingress": {
+    "fcf_source_schema": "fcf.source.v1",
+    "fcf_proposal_schema": "fcf.proposal.v1",
+    "source_bytes_required": true,
+    "canonical_write_allowed": false,
+    "authority": "NONE",
+    "semantic_truth": "NOT_PROVEN",
+    "graph_completeness": "UNKNOWN"
+  },
+  "gates": {
+    "FGK_LOCAL_TESTS": "SOURCE_REPORTED_PASS_75_OF_75",
+    "FGK_INDEPENDENT_CI": "OPEN",
+    "GRAPHIFY_REAL_ENGINE": "HOLD_NOT_RUN",
+    "FCF_EXTERNAL_INGEST": "NOT_RUN",
+    "CODEX_HOST_REGISTRATION": "NOT_RUN",
+    "LEGAL_LICENSE": "OPEN",
+    "RELEASE": "HOLD"
+  },
+  "invariants": [
+    "EXTRACTION_NOT_VERIFICATION",
+    "SOURCE_DIGEST_NOT_SOURCE_AUTHENTICITY",
+    "EDGE_ABSENCE_NOT_NEGATIVE_PROOF",
+    "GRAPH_TOOL_NOT_EFFECT_AUTHORITY",
+    "EXTERNAL_PROVIDER_NOT_FCF_CANON",
+    "LOCAL_PASS_NOT_FCF_GATE_PASS"
+  ]
+}
